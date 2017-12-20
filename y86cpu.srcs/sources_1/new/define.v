@@ -1,3 +1,16 @@
+// Global macros
+`define RST_EN      1'B1
+`define WRITE_EN    1'B1
+`define READ_EN     1'B1
+`define IFUN        3:0
+`define ICODE       3:0
+`define INS_VALID   1'B1
+`define TRUE        1'B1
+`define FALSE       1'B1
+`define CHIP_EN     1'B1
+`define BYTE        8'H08
+
+// Instructures
 `define HALT    8'H00
 `define NOP     8'H10
 `define RRMOVQ  8'H20
@@ -30,6 +43,12 @@
 `define PUSHQ   8'HA0
 `define POPQ    8'HB0
 
+// Register info
+`define REG_ADDR_BUS    3:0
+`define REG_DATA_BUS    63:0
+`define REG_WIDTH       64
+
+// Registers
 `define RAX     8'H00
 `define RBX     8'H03
 `define RCX     8'H01
@@ -47,4 +66,9 @@
 `define R14     8'H0E
 `define NREG    8'H0F
 
+// ROM info
+`define ROM_ADDR_BUS    63:0
+`define ROM_DATA_BUS    79:0
+`define ROM_SIZE        131071
+`define ROOM_ADDR       17
 
