@@ -2,15 +2,12 @@
 `define RST_EN      1'B1
 `define WRITE_EN    1'B1
 `define READ_EN     1'B1
-`define IFUN        3:0
-`define ICODE       3:0
-`define INS_VALID   1'B1
 `define TRUE        1'B1
 `define FALSE       1'B1
 `define CHIP_EN     1'B1
-`define BYTE        8'H08
+`define INS_VALID   1'B1
 
-// Instructures
+// Instructions
 `define HALT    8'H00
 `define NOP     8'H10
 `define RRMOVQ  8'H20
@@ -43,32 +40,41 @@
 `define PUSHQ   8'HA0
 `define POPQ    8'HB0
 
-// Register info
-`define REG_ADDR_BUS    3:0
-`define REG_DATA_BUS    63:0
-`define REG_WIDTH       64
-
 // Registers
-`define RAX     8'H00
-`define RBX     8'H03
-`define RCX     8'H01
-`define RDX     8'H02
-`define RSP     8'H04
-`define RBP     8'H05
-`define RSI     8'H06
-`define RDI     8'H07
-`define R8      8'H08
-`define R9      8'H09
-`define R10     8'H0A
-`define R11     8'H0B
-`define R12     8'H0C
-`define R13     8'H0D
-`define R14     8'H0E
-`define NREG    8'H0F
+`define RAX     4'H0
+`define RBX     4'H3
+`define RCX     4'H1
+`define RDX     4'H2
+`define RSP     4'H4
+`define RBP     4'H5
+`define RSI     4'H6
+`define RDI     4'H7
+`define R8      4'H8
+`define R9      4'H9
+`define R10     4'HA
+`define R11     4'HB
+`define R12     4'HC
+`define R13     4'HD
+`define R14     4'HE
+`define NREG    4'HF
 
-// ROM info
-`define ROM_ADDR_BUS    63:0
-`define ROM_DATA_BUS    79:0
-`define ROM_SIZE        131071
-`define ROOM_ADDR       17
+// Data info
+`define IFUN_WIDTH      4
+`define ICODE_WIDTH     4
+`define REG_ADDR_WIDTH  4
+`define ADDR_WIDTH      64
+`define DATA_WIDTH      64
+`define INST_WIDTH      80
+
+// Bus info
+`define IFUN_BUS        3:0
+`define ICODE_BUS       3:0
+`define REG_ADDR_BUS    3:0
+`define ADDR_BUS        63:0
+`define INST_BUS        79:0
+`define DATA_BUS        63:0
+
+// Memory
+`define MEM_SIZE        131071
+`define MEM_ADDR        17
 

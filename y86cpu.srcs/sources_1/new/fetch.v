@@ -3,31 +3,31 @@
 module fetch(
     input wire clk,
     input wire rst,
-    output reg en,
-    output reg [`ROM_ADDR_BUS] pc
+    output reg mem_en,
+    output reg [`ADDR_BUS] pc
     );
 
     always @(posedge clk)
     begin
         if(rst == `RST_EN)
             begin
-                en <= ~`CHIP_EN;
+                mem_en <= ~`CHIP_EN;
             end
         else
             begin
-                en <= `CHIP_EN;
+                mem_en <= `CHIP_EN;
             end
     end
 
     always @(posedge clk)
     begin
-        if(en == ~`CHIP_EN)
+        if(mem_en == ~`CHIP_EN)
             begin
-                pc <= 64'H0;
+                pc <= `ADDR_WIDTH'H0;
             end
         else
             begin
-                pc <= pc + 64'HA;
+                pc <= pc + `ADDR_WIDTH'HA;
             end
     end
 

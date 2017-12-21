@@ -3,18 +3,18 @@
 module decode_reg(
     input wire rst,
     input wire clk,
-    input wire [`ROM_ADDR_BUS] pc_i,
-    input wire [`ROM_DATA_BUS] inst_i,
-    output reg [`ROM_ADDR_BUS] pc_o,
-    output reg [`ROM_DATA_BUS] inst_o
+    input wire [`ADDR_BUS] pc_i,
+    input wire [`INST_BUS] inst_i,
+    output reg [`ADDR_BUS] pc_o,
+    output reg [`INST_BUS] inst_o
     );
 
     always @(posedge clk)
     begin
         if(rst == `RST_EN)
             begin
-                pc_o <= 64'H0;
-                inst_o <= 64'H0;
+                pc_o <= `ADDR_WIDTH'H0;
+                inst_o <= `ADDR_WIDTH'H0;
             end
         else
             begin
