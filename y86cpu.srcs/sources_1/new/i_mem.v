@@ -4,7 +4,7 @@ module i_mem(
     input wire rst,
     input wire [`ADDR_BUS] addr,
     output reg [`INST_BUS] inst,
-    output reg error
+    output reg [`STAT_BUS] stat
     );
     
     reg [`INST_BUS]mem[`MEM_SIZE:0];
@@ -14,16 +14,16 @@ module i_mem(
             if(rst == `RST_EN)
             begin
                 inst <= `INST_WIDTH'B0;
-                error = 1'B0;
+                stat <= `AOK;
             end
             else if(addr <= `MEM_SIZE)
             begin
                 inst <= mem[addr];
-                error = 1'B0;
+                stat <= `AOK;
             end
             else
             begin
-                error = 1'B1;
+                stat <= `SMEM;
             end
         end
 endmodule
