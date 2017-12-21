@@ -75,6 +75,7 @@
 `define DATA_BUS        63:0
 
 // Memory
+`define BYTE_SIZE       7
 `define MEM_SIZE        131071
 `define MEM_ADDR        17
 

@@ -47,23 +47,23 @@ module registers(
             end
         end
         
-        always @(*)
+    always @(*)
+            begin
+                if(rst == `RST_EN || srcB >= `NREG)
                 begin
-                    if(rst == `RST_EN || srcB >= `NREG)
-                    begin
-                        valB <= `DATA_WIDTH'H0;
-                    end
-                    else if(srcB == dstW && srcB_en == `READ_EN && dstW_en == `WRITE_EN)
-                    begin
-                        valB <= valW;
-                    end
-                    else if(srcB_en == `READ_EN)
-                    begin
-                        valB <= registers[srcB];
-                    end
-                    else
-                    begin
-                        valB <= `DATA_WIDTH'H0;
-                    end
+                    valB <= `DATA_WIDTH'H0;
                 end
+                else if(srcB == dstW && srcB_en == `READ_EN && dstW_en == `WRITE_EN)
+                begin
+                    valB <= valW;
+                end
+                else if(srcB_en == `READ_EN)
+                begin
+                    valB <= registers[srcB];
+                end
+                else
+                begin
+                    valB <= `DATA_WIDTH'H0;
+                end
+            end
 endmodule

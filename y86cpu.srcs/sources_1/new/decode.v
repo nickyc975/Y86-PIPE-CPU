@@ -5,6 +5,8 @@ module decode(
     input wire rst,
     input wire [`ADDR_BUS] pc_i,
     input wire [`INST_BUS] inst_i,
+    input wire [`DATA_BUS] FwdA,
+    input wire [`DATA_BUS] FwdB,
     output reg [`ICODE_BUS] icode,
     output reg [`IFUN_BUS] ifun,
     output reg [`DATA_BUS] valA,
@@ -14,7 +16,7 @@ module decode(
     output reg [`ADDR_BUS] dstM
     );
     
-    always @(posedge clk)
+    always @(*)
     begin
         if(rst == `RST_EN)
         begin
@@ -30,8 +32,19 @@ module decode(
         begin
             icode <= inst_i[`INST_WIDTH-1:`INST_WIDTH-4];
             ifun <= inst_i[`INST_WIDTH-5:`INST_WIDTH-8];
-            case(icode)
-                
+            case({icode, `IFUN_WIDTH'H0})
+                `NOP:    
+                        begin
+                            valA <= `DATA_WIDTH'B0;
+                            valB <= `DATA_WIDTH'B0;
+                            valC <= `DATA_WIDTH'B0;
+                            dstE <= `REG_ADDR_WIDTH'H0;
+                            dstM <= `ADDR_WIDTH'H0;
+                        end
+                 `RRMOVQ:
+                        begin
+                            
+                        end
             endcase
         end
     end 
