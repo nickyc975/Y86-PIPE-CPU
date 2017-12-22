@@ -44,6 +44,7 @@
 `define SUBQ    4'H1
 `define ANDQ    4'H2
 `define XORQ    4'H3
+`define NOPQ    4'H4
 
 `define JMP     4'H0
 `define JLE     4'H1
@@ -89,6 +90,7 @@
 `define INST_BUS        79:0
 `define DATA_BUS        63:0
 `define STAT_BUS        2:0
+`define CC_BUS          2:0
 
 `define ICODE           79:76
 `define IFUN            75:72

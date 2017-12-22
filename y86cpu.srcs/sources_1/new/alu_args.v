@@ -1,23 +1,17 @@
 `include "define.v"
 
-module execute(
-    input wire [`STAT_BUS] W_stat,
-    input wire [`STAT_BUS] m_stat,
+module alu_args(
     input wire [`ICODE_BUS] E_icode,
     input wire [`IFUN_BUS] E_ifun,
     input wire [`DATA_BUS] E_valC,
     input wire [`DATA_BUS] E_valA,
     input wire [`DATA_BUS] E_valB,
-    input wire [`REG_ADDR_BUS] E_dstE,
     
-    output reg e_Cnd,
-    output reg [`DATA_BUS] e_valE,
-    output reg [`DATA_BUS] e_valA,
-    output reg [`REG_ADDR_BUS] e_dstE
+    output reg [`DATA_BUS] aluA,
+    output reg [`DATA_BUS] aluB,
+    output reg [`IFUN_BUS] fun
     );
     
-    reg [`DATA_BUS] aluA;
-    reg [`DATA_BUS] aluB;
     always @(*)
         begin
             case(E_icode)
@@ -25,41 +19,63 @@ module execute(
                     begin
                         aluA <= E_valA;
                         aluB <= `DATA_WIDTH'H0;
+                        fun <= `ADDQ;
                     end
-                {`IXX, `OPQ}:
+                `IXX:
                     begin
-                        aluA <= E_valA;
-                        aluB <= E_valB;
+                        aluA <= E_valB;
+                        if(E_ifun == `IRMOVQ)
+                        begin
+                            aluB <= `DATA_WIDTH'H0;
+                            fun <= `ADDQ;
+                        end
+                        else
+                        begin
+                            aluB <= E_valC;
+                            fun <= E_ifun - 1;
+                        end
+                    end
+                `OPQ:
+                    begin
+                        aluA <= E_valB;
+                        aluB <= E_valA;
+                        fun <= E_ifun;
                     end
                 `RMMOVQ:
                     begin
                         aluA <= E_valA;
                         aluB <= E_valC;
+                        fun <= `ADDQ;
                     end
                 `MRMOVQ:
                     begin
                         aluA <= E_valB;
                         aluB <= E_valC;
+                        fun <= `ADDQ;
                     end
                 `JXX:
                     begin
                         aluA <= `DATA_WIDTH'H0;
                         aluB <= `DATA_WIDTH'H0;
+                        fun <= `NOPQ;
                     end
                 {`CALL, `PUSHQ}:
                     begin   
                         aluA <= E_valB;
                         aluB <= -`DATA_WIDTH'H8;
+                        fun <= `ADDQ;
                     end
                 {`RET, `POPQ}:
                     begin
                         aluA <= E_valB;
                         aluB <= `DATA_WIDTH'H8;
+                        fun <= `ADDQ;
                     end
                 default:
                     begin
                         aluA <= `DATA_WIDTH'H0;
                         aluB <= `DATA_WIDTH'H0;
+                        fun <= `NOPQ;
                     end
             endcase
         end
