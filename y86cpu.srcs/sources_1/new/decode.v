@@ -1,51 +1,59 @@
 `include "define.v"
 
 module decode(
-    input wire clk,
-    input wire rst,
-    input wire [`ADDR_BUS] pc_i,
-    input wire [`INST_BUS] inst_i,
-    input wire [`DATA_BUS] FwdA,
-    input wire [`DATA_BUS] FwdB,
-    output reg [`ICODE_BUS] icode,
-    output reg [`IFUN_BUS] ifun,
+    input wire [`ICODE_BUS] icode,
+    input wire [`ADDR_BUS] valP,
+    input wire [`REG_ADDR_BUS] d_srcA,
+    input wire [`REG_ADDR_BUS] d_srcB,
+    input wire [`DATA_BUS] d_rvalA,
+    input wire [`DATA_BUS] d_rvalB,
+    input wire [`REG_ADDR_BUS] e_dstE,
+    input wire [`DATA_BUS] e_valE,
+    input wire [`REG_ADDR_BUS] M_dstE,
+    input wire [`DATA_BUS] M_valE,
+    input wire [`REG_ADDR_BUS] M_dstM,
+    input wire [`DATA_BUS] m_valM,
+    input wire [`REG_ADDR_BUS] W_dstE,
+    input wire [`DATA_BUS] W_valE,
+    input wire [`REG_ADDR_BUS] W_dstM,
+    input wire [`DATA_BUS] W_valM,
+    
     output reg [`DATA_BUS] valA,
-    output reg [`DATA_BUS] valB,
-    output reg [`DATA_BUS] valC,
-    output reg [`REG_ADDR_BUS] dstE,
-    output reg [`ADDR_BUS] dstM
+    output reg [`DATA_BUS] valB
     );
     
     always @(*)
     begin
-        if(rst == `RST_EN)
-        begin
-            icode <= `ICODE_WIDTH'B0;
-            ifun <= `IFUN_WIDTH'B0;
-            valA <= `DATA_WIDTH'B0;
-            valB <= `DATA_WIDTH'B0;
-            valC <= `DATA_WIDTH'B0;
-            dstE <= `REG_ADDR_WIDTH'H0;
-            dstM <= `ADDR_WIDTH'H0;
-        end
-        else
-        begin
-            icode <= inst_i[`INST_WIDTH-1:`INST_WIDTH-4];
-            ifun <= inst_i[`INST_WIDTH-5:`INST_WIDTH-8];
-            case({icode, `IFUN_WIDTH'H0})
-                `NOP:    
-                        begin
-                            valA <= `DATA_WIDTH'B0;
-                            valB <= `DATA_WIDTH'B0;
-                            valC <= `DATA_WIDTH'B0;
-                            dstE <= `REG_ADDR_WIDTH'H0;
-                            dstM <= `ADDR_WIDTH'H0;
-                        end
-                 `RRMOVQ:
-                        begin
-                            
-                        end
-            endcase
-        end
+    valA <= `DATA_WIDTH'H0;
+    valB <= `DATA_WIDTH'H0;
+        case(icode)
+            {`CALL, `JXX}:
+                begin
+                    valA <= valP;
+                end
+            {`HALT, `NOP}:
+                begin
+                end
+            default:
+                begin
+                    case(d_srcA)
+                        e_dstE:     valA <= e_valE;
+                        M_dstM:     valA <= m_valM;
+                        M_dstE:     valA <= M_valE;
+                        W_dstE:     valA <= W_valE;
+                        W_dstM:     valA <= W_valM;
+                        default:    valA <= d_rvalA;
+                    endcase
+                    
+                    case(d_srcB)
+                        e_dstE:     valB <= e_valE;
+                        M_dstM:     valB <= m_valM;
+                        M_dstE:     valB <= M_valE;
+                        W_dstE:     valB <= W_valE;
+                        W_dstM:     valB <= W_valM;
+                        default:    valB <= d_rvalB;
+                    endcase
+                end
+        endcase
     end 
 endmodule

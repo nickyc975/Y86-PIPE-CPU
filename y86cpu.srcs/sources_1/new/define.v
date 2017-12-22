@@ -104,7 +104,7 @@
 `define BYTE0           7:0
 
 // Memory
-`define BYTE_SIZE       7
+`define BYTE_SIZE       8
 `define MEM_SIZE        131071
 `define MEM_ADDR        17
 

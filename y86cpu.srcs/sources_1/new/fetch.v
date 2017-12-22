@@ -15,11 +15,18 @@ module fetch(
     output reg [`STAT_BUS] stat,
     output reg [`ADDR_BUS] predPC
     );
-
+    
     always @(*)
     begin
         icode <= inst_i[`ICODE];
         ifun <= inst_i[`IFUN];
+        rA <= `NREG;
+        rB <= `NREG;
+        valC <= `DATA_WIDTH'H0;
+        valP <= `DATA_WIDTH'H0;
+        dstE <= `NREG;
+        dstM <= `NREG;
+        predPC <= `ADDR_WIDTH'H0;
         case(icode)
             `HALT:
                 begin
@@ -44,7 +51,6 @@ module fetch(
                 end
             `IXX:
                 begin
-                    rA <= inst_i[`SRCA];
                     rB <= inst_i[`SRCB];
                     valC <= {inst_i[`BYTE0], inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3],
                              inst_i[`BYTE4], inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7]};
