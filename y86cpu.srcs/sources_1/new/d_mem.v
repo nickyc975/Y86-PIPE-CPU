@@ -10,7 +10,7 @@ module d_mem(
     output reg error
     );
     
-    reg [`DATA_BUS]mem[`MEM_SIZE:0];
+    reg [`BYTE0]mem[0:`MEM_SIZE];
     
     always @(*)
         begin
@@ -24,13 +24,15 @@ module d_mem(
                 error <= 1'B1;
                 data_o <= `DATA_WIDTH'B0;
             end
-            else if(write == `TRUE)
+            else if(write == `FALSE && addr <= `MEM_SIZE - 7)
             begin
-                data_o <= data_i;
+                data_o <= {mem[addr], mem[addr+1], mem[addr+2], mem[addr+3],
+                           mem[addr+4], mem[addr+5], mem[addr+6], mem[addr+7]};
+                error <= 1'B0;
             end
             else
             begin
-                data_o <= mem[addr];
+                error <= 1'B0;
             end
         end
     
@@ -38,11 +40,13 @@ module d_mem(
         begin
             if(write == `TRUE && rst == ~`RST_EN)
             begin
-                if(addr <= `MEM_SIZE)
+                if(addr <= `MEM_SIZE - 7)
                 begin
-                    mem[addr] <= data_i;
+                    {mem[addr], mem[addr+1], mem[addr+2], mem[addr+3],
+                     mem[addr+4], mem[addr+5], mem[addr+6], mem[addr+7]} <= data_i;
+                    error <= 1'B0;
                 end
-                else if(addr > `MEM_SIZE)
+                else
                 begin
                     error <= 1'B1;
                 end

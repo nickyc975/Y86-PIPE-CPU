@@ -3,16 +3,13 @@
 module registers(
     input wire clk,
     input wire rst,
-    input wire dstW_en,
-    input wire dstE_en,
     input wire [`REG_ADDR_BUS]dstW,
     input wire [`REG_ADDR_BUS]dstE,
     input wire [`DATA_BUS]valW,
     input wire [`DATA_BUS]valE,
-    input wire srcA_en,
-    input wire srcB_en,
     input wire [`REG_ADDR_BUS]srcA,
     input wire [`REG_ADDR_BUS]srcB,
+    
     output reg [`DATA_BUS]valA,
     output reg [`DATA_BUS]valB
     );
@@ -21,23 +18,17 @@ module registers(
     
     always @(posedge clk)
         begin
-            if(rst == ~`RST_EN)
+            if(rst == ~`RST_EN && dstW < `NREG)
             begin
-                if(dstW_en == `WRITE_EN && dstW < `NREG)
-                begin
-                    registers[dstW] <= valW;
-                end
+                registers[dstW] <= valW;
             end
         end
         
     always @(posedge clk)
         begin
-            if(rst == ~`RST_EN)
+            if(rst == ~`RST_EN && dstE < `NREG)
             begin
-                if(dstE_en == `WRITE_EN && dstE < `NREG)
-                begin
-                    registers[dstE] <= valE;
-                end
+                registers[dstE] <= valE;
             end
         end
         
@@ -47,45 +38,37 @@ module registers(
             begin
                 valA <= `DATA_WIDTH'H0;
             end
-            else if(srcA == dstW && srcA_en == `READ_EN && dstW_en == `WRITE_EN)
+            else if(srcA == dstW)
             begin
                 valA <= valW;
             end
-            else if(srcA == dstE && srcA_en == `READ_EN && dstE_en == `WRITE_EN)
+            else if(srcA == dstE)
             begin
                  valA <= valE;
             end
-            else if(srcA_en == `READ_EN)
-            begin
-                valA <= registers[srcA];
-            end
             else
             begin
-                valA <= `DATA_WIDTH'H0;
+                valA <= registers[srcA];
             end
         end
         
     always @(*)
+        begin
+            if(rst == `RST_EN || srcB >= `NREG)
             begin
-                if(rst == `RST_EN || srcB >= `NREG)
-                begin
-                    valB <= `DATA_WIDTH'H0;
-                end
-                else if(srcB == dstW && srcB_en == `READ_EN && dstW_en == `WRITE_EN)
-                begin
-                    valB <= valW;
-                end
-                else if(srcB == dstE && srcB_en == `READ_EN && dstE_en == `WRITE_EN)
-                begin
-                     valB <= valE;
-                end
-                else if(srcB_en == `READ_EN)
-                begin
-                    valB <= registers[srcB];
-                end
-                else
-                begin
-                    valB <= `DATA_WIDTH'H0;
-                end
+                valB <= `DATA_WIDTH'H0;
             end
+            else if(srcB == dstW)
+            begin
+                valB <= valW;
+            end
+            else if(srcB == dstE)
+            begin
+                valB <= valE;
+            end
+            else
+            begin
+                valB <= registers[srcB];
+            end
+        end
 endmodule
