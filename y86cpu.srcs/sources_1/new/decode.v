@@ -30,6 +30,7 @@ module decode(
             {`CALL, `JXX}:
                 begin
                     valA <= valP;
+                    valB <= d_rvalB;
                 end
             {`HALT, `NOP}:
                 begin

@@ -18,7 +18,7 @@
 `define IXX     4'H3
 `define RMMOVQ  4'H4
 `define MRMOVQ  4'H5
-`define OPO     4'H6
+`define OPQ     4'H6
 `define JXX     4'H7
 `define CALL    4'H8
 `define RET     4'H9

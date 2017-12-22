@@ -26,3 +26,11 @@ y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_i_mem_0_0/y86cpu_i_mem_0_0.xml
 y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_select_pc_0_0/y86cpu_select_pc_0_0.xci
 y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_select_pc_0_0/y86cpu_select_pc_0_0.xml
 y86cpu.srcs/sources_1/bd/y86cpu/ui/bd_734de571.ui
+y86cpu.srcs/sources_1/bd/mref/registers/xgui/registers_v1_0.tcl
+y86cpu.srcs/sources_1/bd/mref/decode/component.xml
+y86cpu.srcs/sources_1/bd/mref/decode/xgui/decode_v1_0.tcl
+y86cpu.srcs/sources_1/bd/mref/registers/component.xml
+y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_decode_0_0/y86cpu_decode_0_0.xci
+y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_decode_0_0/y86cpu_decode_0_0.xml
+y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_registers_0_0/y86cpu_registers_0_0.xci
+y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_registers_0_0/y86cpu_registers_0_0.xml

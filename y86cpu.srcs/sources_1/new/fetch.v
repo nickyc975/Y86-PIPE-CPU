@@ -40,7 +40,7 @@ module fetch(
                     predPC <= valP;
                     stat <= `AOK;
                 end
-            {`CXX, `OPO}:
+            {`CXX, `OPQ}:
                 begin
                     rA <= inst_i[`SRCA];
                     rB <= inst_i[`SRCB];
