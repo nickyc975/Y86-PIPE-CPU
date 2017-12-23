@@ -6,6 +6,7 @@ module d_mem(
     input wire write,
     input wire [`ADDR_BUS] addr,
     input wire [`DATA_BUS] data_i,
+    
     output reg [`DATA_BUS] data_o,
     output reg error
     );
