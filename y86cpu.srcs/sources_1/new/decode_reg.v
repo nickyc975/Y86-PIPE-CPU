@@ -30,12 +30,12 @@ module decode_reg(
             begin
                 icode_o <= `ICODE_WIDTH'H0;
                 ifun_o <= `IFUN_WIDTH'H0;
-                rA_o <= `REG_ADDR_WIDTH'H0;
-                rB_o <= `REG_ADDR_WIDTH'H0;
+                rA_o <= `NREG;
+                rB_o <= `NREG;
                 valC_o <= `DATA_WIDTH'H0;
                 valP_o <= `ADDR_WIDTH'H0;
-                dstE_o <= `REG_ADDR_WIDTH'H0;
-                dstM_o <= `REG_ADDR_WIDTH'H0;
+                dstE_o <= `NREG;
+                dstM_o <= `NREG;
                 stat_o <= `STAT_WIDTH'H0;
             end
         else

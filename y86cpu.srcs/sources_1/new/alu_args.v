@@ -59,13 +59,25 @@ module alu_args(
                         aluB <= `DATA_WIDTH'H0;
                         fun <= `NOPQ;
                     end
-                {`CALL, `PUSHQ}:
+                `CALL:
                     begin   
                         aluA <= E_valB;
                         aluB <= -`DATA_WIDTH'H8;
                         fun <= `ADDQ;
                     end
-                {`RET, `POPQ}:
+                `RET:
+                    begin
+                        aluA <= E_valB;
+                        aluB <= `DATA_WIDTH'H8;
+                        fun <= `ADDQ;
+                    end
+                `PUSHQ:
+                    begin   
+                        aluA <= E_valB;
+                        aluB <= -`DATA_WIDTH'H8;
+                        fun <= `ADDQ;
+                    end
+                `POPQ:
                     begin
                         aluA <= E_valB;
                         aluB <= `DATA_WIDTH'H8;

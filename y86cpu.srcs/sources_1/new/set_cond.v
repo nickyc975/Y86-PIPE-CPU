@@ -18,6 +18,13 @@ module set_cond(
     
     reg ZF, SF, OF;
     
+    initial
+    begin
+        ZF <= 1'B0;
+        SF <= 1'B0;
+        OF <= 1'B0;
+    end
+    
     always @(posedge clk)
         begin
             if(rst == `RST_EN)

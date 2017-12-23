@@ -54,3 +54,10 @@ y86cpu.srcs/sources_1/bd/mref/mem_reg/xgui/mem_reg_v1_0.tcl
 y86cpu.srcs/sources_1/bd/mref/mem_reg/component.xml
 y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_mem_reg_0_0/y86cpu_mem_reg_0_0.xci
 y86cpu.srcs/sources_1/bd/y86cpu/ip/y86cpu_mem_reg_0_0/y86cpu_mem_reg_0_0.xml
+y86cpu.srcs/sources_1/bd/mref/write_reg/xgui/write_reg_v1_0.tcl
+y86cpu.srcs/sources_1/bd/mref/mem/xgui/mem_v1_0.tcl
+y86cpu.srcs/sources_1/bd/mref/d_mem/component.xml
+y86cpu.srcs/sources_1/bd/mref/d_mem/xgui/d_mem_v1_0.tcl
+y86cpu.srcs/sources_1/bd/mref/mem/component.xml
+y86cpu.srcs/sources_1/bd/mref/write_reg/component.xml
+insts.data

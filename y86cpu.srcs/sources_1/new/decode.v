@@ -24,8 +24,6 @@ module decode(
     
     always @(*)
     begin
-    valA <= `DATA_WIDTH'H0;
-    valB <= `DATA_WIDTH'H0;
         case(icode)
             {`CALL, `JXX}:
                 begin
@@ -34,26 +32,60 @@ module decode(
                 end
             {`HALT, `NOP}:
                 begin
+                    valA <= `DATA_WIDTH'H0;
+                    valB <= `DATA_WIDTH'H0;
                 end
             default:
                 begin
-                    case(d_srcA)
-                        e_dstE:     valA <= e_valE;
-                        M_dstM:     valA <= m_valM;
-                        M_dstE:     valA <= M_valE;
-                        W_dstE:     valA <= W_valE;
-                        W_dstM:     valA <= W_valM;
-                        default:    valA <= d_rvalA;
-                    endcase
+                if(d_srcA == e_dstE)
+                begin
+                    valA <= e_valE;
+                end
+                else if(d_srcA == M_dstM)
+                begin
+                    valA <= m_valM;
+                end
+                else if(d_srcA == M_dstE)
+                begin
+                    valA <= M_valE;
+                end
+                else if(d_srcA == W_dstE)
+                begin
+                    valA <= W_valE;
+                end
+                else if(d_srcA == W_dstM)
+                begin
+                    valA <= W_valM;
+                end
+                else
+                begin
+                    valA <= d_rvalA;
+                end
                     
-                    case(d_srcB)
-                        e_dstE:     valB <= e_valE;
-                        M_dstM:     valB <= m_valM;
-                        M_dstE:     valB <= M_valE;
-                        W_dstE:     valB <= W_valE;
-                        W_dstM:     valB <= W_valM;
-                        default:    valB <= d_rvalB;
-                    endcase
+                if(d_srcB == e_dstE)
+                begin
+                    valB <= e_valE;
+                end
+                else if(d_srcB == M_dstM)
+                begin
+                    valB <= m_valM;
+                end
+                else if(d_srcB == M_dstE)
+                begin
+                    valB <= M_valE;
+                end
+                else if(d_srcB == W_dstE)
+                begin
+                    valB <= W_valE;
+                end
+                else if(d_srcB == W_dstM)
+                begin
+                    valB <= W_valM;
+                end
+                else
+                begin
+                    valB <= d_rvalB;
+                end
                 end
         endcase
     end 

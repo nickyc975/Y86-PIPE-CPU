@@ -11,32 +11,30 @@ module mem(
     
     always @(*)
         begin
-            case(M_icode)
-                `RMMOVQ:
-                    begin
-                        addr <= M_valE;
-                        write <= 1'B1;
-                    end
-                `MRMOVQ:
-                    begin
-                        addr <= M_valE;
-                        write <= 1'B0;
-                    end
-                {`CALL, `PUSHQ}:
-                    begin
-                        addr <= M_valA;
-                        write <= 1'B1;
-                    end
-                {`RET, `POPQ}:
-                    begin
-                        addr <= M_valA;
-                        write <= 1'B0;
-                    end
-                default:
-                    begin
-                        write <= 1'B0;
-                    end
-            endcase
+            if(M_icode == `RMMOVQ)
+                begin
+                    addr <= M_valE;
+                    write <= 1'B1;
+                end
+            else if(M_icode == `MRMOVQ)
+                begin
+                    addr <= M_valE;
+                    write <= 1'B0;
+                end
+            else if(M_icode == `CALL || M_icode == `PUSHQ)
+                begin
+                    addr <= M_valA;
+                    write <= 1'B1;
+                end
+            else if(M_icode == `RET || M_icode == `POPQ)
+                begin
+                    addr <= M_valA;
+                    write <= 1'B0;
+                end
+            else
+                begin
+                    write <= 1'B0;
+                end
         end
     
 endmodule
