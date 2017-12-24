@@ -23,15 +23,15 @@ module alu_args(
                     end
                 `IXX:
                     begin
-                        aluA <= E_valB;
+                        aluB <= E_valC;
                         if(E_ifun == `IRMOVQ)
                         begin
-                            aluB <= `DATA_WIDTH'H0;
+                            aluA <= `DATA_WIDTH'H0;
                             fun <= `ADDQ;
                         end
                         else
                         begin
-                            aluB <= E_valC;
+                            aluA <= E_valB;
                             fun <= E_ifun - 1;
                         end
                     end
@@ -43,13 +43,13 @@ module alu_args(
                     end
                 `RMMOVQ:
                     begin
-                        aluA <= E_valA;
+                        aluA <= E_valB;
                         aluB <= E_valC;
                         fun <= `ADDQ;
                     end
                 `MRMOVQ:
                     begin
-                        aluA <= E_valB;
+                        aluA <= E_valA;
                         aluB <= E_valC;
                         fun <= `ADDQ;
                     end

@@ -62,3 +62,4 @@ y86cpu.srcs/sources_1/bd/mref/mem/component.xml
 y86cpu.srcs/sources_1/bd/mref/write_reg/component.xml
 insts.data
 cpu_tb_behav.wcfg
+cpu_tb_behav1.wcfg

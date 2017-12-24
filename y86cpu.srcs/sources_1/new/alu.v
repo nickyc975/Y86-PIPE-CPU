@@ -16,7 +16,7 @@ module alu(
         case(fun)
             `ADDQ:
                 begin
-                    e_valE <= aluA + aluB;
+                    e_valE = aluA + aluB;
                     ZF <= e_valE == 0;
                     SF <= e_valE[`DATA_WIDTH-1];
                     OF <= (aluA[`DATA_WIDTH-1] == aluB[`DATA_WIDTH-1]) &&
@@ -24,7 +24,7 @@ module alu(
                 end
             `SUBQ:
                 begin
-                    e_valE <= aluA - aluB;
+                    e_valE = aluA - aluB;
                     ZF <= e_valE == 0;
                     SF <= e_valE[`DATA_WIDTH-1];
                     OF <= (aluA[`DATA_WIDTH-1] != aluB[`DATA_WIDTH-1]) &&
@@ -32,14 +32,14 @@ module alu(
                 end
             `ANDQ:
                 begin
-                    e_valE <= aluA & aluB;
+                    e_valE = aluA & aluB;
                     ZF <= e_valE == 0;
                     SF <= e_valE[`DATA_WIDTH-1];
                     OF <= 1'B0;
                 end
             `XORQ:
                 begin
-                    e_valE <= aluA ^ aluB;
+                    e_valE = aluA ^ aluB;
                     ZF <= e_valE == 0;
                     SF <= e_valE[`DATA_WIDTH-1];
                     OF <= 1'B0;

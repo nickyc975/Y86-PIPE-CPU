@@ -22,8 +22,6 @@ module execute_reg(
     output reg [`DATA_BUS] E_valB,
     output reg [`REG_ADDR_BUS] E_dstE,
     output reg [`REG_ADDR_BUS] E_dstM
-    // output reg [`REG_ADDR_BUS] E_srcA,
-    // output reg [`REG_ADDR_BUS] E_srcB
     );
     
     always @(posedge clk)
@@ -38,8 +36,6 @@ module execute_reg(
                 E_valC <= `DATA_WIDTH'H0;
                 E_dstE <= `NREG;
                 E_dstM <= `NREG;
-                // E_srcA <= `NREG;
-                // E_srcB <= `NREG;
             end
             else
             begin
@@ -51,8 +47,6 @@ module execute_reg(
                 E_valB <= d_valB;
                 E_dstE <= d_dstE;
                 E_dstM <= d_dstM;
-                // E_srcA <= d_srcA;
-                // E_srcB <= d_srcB;
             end
         end
     

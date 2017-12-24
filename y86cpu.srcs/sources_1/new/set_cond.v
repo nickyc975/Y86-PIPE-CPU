@@ -44,28 +44,26 @@ module set_cond(
     
     always @(*)
     begin
-        case(E_icode)
-            {`JXX, `CXX}:
-                begin
-                    case(E_ifun)
-                        {`JLE, `CMOVLE}:     e_Cnd <= ZF || ((!SF && OF) || SF);
-                        {`JL, `CMOVL}:       e_Cnd <= (!SF && OF) || SF;
-                        {`JE, `CMOVE}:       e_Cnd <= ZF;
-                        {`JNE, `CMOVNE}:     e_Cnd <= !ZF;
-                        {`JGE, `CMOVGE}:     e_Cnd <= ZF || ((SF && OF) || !SF);
-                        {`JG, `CMOVG}:       e_Cnd <= (SF && OF) || !SF;
-                        default:             e_Cnd <= 1'B0;
-                    endcase
+        if(E_icode ==  `JXX || E_icode ==  `CXX)
+            begin
+                case(E_ifun)
+                    `JLE:     e_Cnd <= ZF || ((!SF && OF) || SF);
+                     `JL:      e_Cnd <= (!SF && OF) || SF;
+                     `JE:      e_Cnd <= ZF;
+                     `JNE:     e_Cnd <= !ZF;
+                     `JGE:     e_Cnd <= ZF || ((SF && OF) || !SF);
+                     `JG:      e_Cnd <= (SF && OF) || !SF;
+                     default:  e_Cnd <= 1'B0;
+                endcase
                     
-                    if(e_Cnd)
-                        e_dstE <= E_dstE;
-                    else
-                        e_dstE <= `NREG;
-                end
-            default:
-                begin
+                if(e_Cnd == 1'B1)
                     e_dstE <= E_dstE;
-                end
-        endcase
+                else
+                    e_dstE <= `NREG;
+            end
+        else
+            begin
+                e_dstE <= E_dstE;
+            end
     end
 endmodule
