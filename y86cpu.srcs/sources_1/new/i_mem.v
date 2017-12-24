@@ -71,7 +71,8 @@ module i_mem(
             end
             else
             begin
-                inst <= `INST_WIDTH'B0;      
+                inst <= {mem[0], mem[1], mem[2], mem[3], mem[4], mem[5],
+                         mem[6], mem[7], mem[8], mem[9]};
                 // stat <= `SMEM;
             end
         end

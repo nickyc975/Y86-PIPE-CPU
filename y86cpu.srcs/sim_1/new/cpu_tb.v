@@ -1,4 +1,4 @@
-`timescale 1ps / 1ps
+`timescale 1ns / 1ps
 //////////////////////////////////////////////////////////////////////////////////
 // Company: 
 // Engineer: 
@@ -33,7 +33,7 @@ module cpu_tb;
     initial
         begin
             rst <= 1'B1;  
-            #105 rst <= 1'B0;  
+            #5 rst <= 1'B0;  
             #1000 $stop;  
         end
     sopc test(.clk(clk), .rst(rst));

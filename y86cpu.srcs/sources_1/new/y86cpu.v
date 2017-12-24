@@ -1,20 +1,16 @@
-module y86cpu
-   (addr,
-    clk,
-    data_i,
-    data_o,
-    inst,
-    pc,
-    rst,
-    rw);
-  output [63:0]addr;
-  input clk;
-  input [63:0]data_i;
-  output [63:0]data_o;
-  input [79:0]inst;
-  output [63:0]pc;
-  input rst;
-  output rw;
+module y86cpu(
+      input rst,
+      input clk,
+      input [79:0]inst,
+      input [63:0]data_i,
+
+      output rw,
+      output [63:0]pc,
+      output [63:0]addr,
+      output [63:0]data_o
+      );
+  
+  
 
   wire alu_0_OF;
   wire alu_0_SF;
