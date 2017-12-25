@@ -17,23 +17,23 @@ module d_mem(
         begin
             if(rst == `RST_EN)
             begin
-                // error <= 1'B0;
-                data_o <= `DATA_WIDTH'B0;
+                // error = 1'B0;
+                data_o = `DATA_WIDTH'B0;
             end
             else if(addr > `MEM_SIZE)
             begin
-                // error <= 1'B1;
-                data_o <= `DATA_WIDTH'B0;
+                // error = 1'B1;
+                data_o = `DATA_WIDTH'B0;
             end
             else if(write == `FALSE && addr <= `MEM_SIZE - 7)
             begin
-                data_o <= {mem[addr], mem[addr+1], mem[addr+2], mem[addr+3],
+                data_o = {mem[addr], mem[addr+1], mem[addr+2], mem[addr+3],
                            mem[addr+4], mem[addr+5], mem[addr+6], mem[addr+7]};
-                // error <= 1'B0;
+                // error = 1'B0;
             end
             else
             begin
-                // error <= 1'B0;
+                // error = 1'B0;
             end
         end
     

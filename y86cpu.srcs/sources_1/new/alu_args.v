@@ -17,77 +17,77 @@ module alu_args(
             case(E_icode)
                 `CXX:
                     begin
-                        aluA <= E_valA;
-                        aluB <= `DATA_WIDTH'H0;
-                        fun <= `ADDQ;
+                        aluA = E_valA;
+                        aluB = `DATA_WIDTH'H0;
+                        fun = `ADDQ;
                     end
                 `IXX:
                     begin
-                        aluB <= E_valC;
+                        aluB = E_valC;
                         if(E_ifun == `IRMOVQ)
                         begin
-                            aluA <= `DATA_WIDTH'H0;
-                            fun <= `ADDQ;
+                            aluA = `DATA_WIDTH'H0;
+                            fun = `ADDQ;
                         end
                         else
                         begin
-                            aluA <= E_valB;
-                            fun <= E_ifun - 1;
+                            aluA = E_valB;
+                            fun = E_ifun - 1;
                         end
                     end
                 `OPQ:
                     begin
-                        aluA <= E_valB;
-                        aluB <= E_valA;
-                        fun <= E_ifun;
+                        aluA = E_valB;
+                        aluB = E_valA;
+                        fun = E_ifun;
                     end
                 `RMMOVQ:
                     begin
-                        aluA <= E_valB;
-                        aluB <= E_valC;
-                        fun <= `ADDQ;
+                        aluA = E_valB;
+                        aluB = E_valC;
+                        fun = `ADDQ;
                     end
                 `MRMOVQ:
                     begin
-                        aluA <= E_valA;
-                        aluB <= E_valC;
-                        fun <= `ADDQ;
+                        aluA = E_valA;
+                        aluB = E_valC;
+                        fun = `ADDQ;
                     end
                 `JXX:
                     begin
-                        aluA <= `DATA_WIDTH'H0;
-                        aluB <= `DATA_WIDTH'H0;
-                        fun <= `NOPQ;
+                        aluA = `DATA_WIDTH'H0;
+                        aluB = `DATA_WIDTH'H0;
+                        fun = `NOPQ;
                     end
                 `CALL:
                     begin   
-                        aluA <= E_valB;
-                        aluB <= -`DATA_WIDTH'H8;
-                        fun <= `ADDQ;
+                        aluA = E_valB;
+                        aluB = -`DATA_WIDTH'H8;
+                        fun = `ADDQ;
                     end
                 `RET:
                     begin
-                        aluA <= E_valB;
-                        aluB <= `DATA_WIDTH'H8;
-                        fun <= `ADDQ;
+                        aluA = E_valB;
+                        aluB = `DATA_WIDTH'H8;
+                        fun = `ADDQ;
                     end
                 `PUSHQ:
                     begin   
-                        aluA <= E_valB;
-                        aluB <= -`DATA_WIDTH'H8;
-                        fun <= `ADDQ;
+                        aluA = E_valB;
+                        aluB = -`DATA_WIDTH'H8;
+                        fun = `ADDQ;
                     end
                 `POPQ:
                     begin
-                        aluA <= E_valB;
-                        aluB <= `DATA_WIDTH'H8;
-                        fun <= `ADDQ;
+                        aluA = E_valB;
+                        aluB = `DATA_WIDTH'H8;
+                        fun = `ADDQ;
                     end
                 default:
                     begin
-                        aluA <= `DATA_WIDTH'H0;
-                        aluB <= `DATA_WIDTH'H0;
-                        fun <= `NOPQ;
+                        aluA = `DATA_WIDTH'H0;
+                        aluB = `DATA_WIDTH'H0;
+                        fun = `NOPQ;
                     end
             endcase
         end

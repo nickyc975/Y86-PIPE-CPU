@@ -96,6 +96,7 @@
 `define IFUN            75:72
 `define SRCA            71:68
 `define SRCB            67:64
+`define BYTE8           71:64
 `define BYTE7           63:56
 `define BYTE6           55:48
 `define BYTE5           47:40

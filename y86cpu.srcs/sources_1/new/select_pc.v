@@ -13,17 +13,17 @@ module select_pc(
     
     always @(*)
         begin
-            if(M_icode == `JXX && !M_Cnd)
+            if(M_icode == `JXX && M_Cnd)
             begin
-                f_pc <= M_valA;
+                f_pc = M_valA;
             end
             else if(W_icode == `RET)
             begin
-                f_pc <= W_valM;
+                f_pc = W_valM;
             end
             else
             begin
-                f_pc <= F_predPC;
+                f_pc = F_predPC;
             end
         end
 endmodule

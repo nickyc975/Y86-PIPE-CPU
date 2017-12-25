@@ -20,9 +20,9 @@ module set_cond(
     
     initial
     begin
-        ZF <= 1'B0;
-        SF <= 1'B0;
-        OF <= 1'B0;
+        ZF = 1'B0;
+        SF = 1'B0;
+        OF = 1'B0;
     end
     
     always @(posedge clk)
@@ -47,23 +47,23 @@ module set_cond(
         if(E_icode ==  `JXX || E_icode ==  `CXX)
             begin
                 case(E_ifun)
-                    `JLE:     e_Cnd <= ZF || ((!SF && OF) || SF);
-                     `JL:      e_Cnd <= (!SF && OF) || SF;
-                     `JE:      e_Cnd <= ZF;
-                     `JNE:     e_Cnd <= !ZF;
-                     `JGE:     e_Cnd <= ZF || ((SF && OF) || !SF);
-                     `JG:      e_Cnd <= (SF && OF) || !SF;
-                     default:  e_Cnd <= 1'B0;
+                    `JLE:      e_Cnd = ZF || ((!SF && OF) || SF);
+                     `JL:      e_Cnd = (!SF && OF) || SF;
+                     `JE:      e_Cnd = ZF;
+                    `JNE:      e_Cnd = !ZF;
+                    `JGE:      e_Cnd = ZF || ((SF && OF) || !SF);
+                     `JG:      e_Cnd = (SF && OF) || !SF;
+                     default:  e_Cnd = 1'B0;
                 endcase
                     
                 if(e_Cnd == 1'B1)
-                    e_dstE <= E_dstE;
+                    e_dstE = E_dstE;
                 else
-                    e_dstE <= `NREG;
+                    e_dstE = `NREG;
             end
         else
             begin
-                e_dstE <= E_dstE;
+                e_dstE = E_dstE;
             end
     end
 endmodule

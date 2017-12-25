@@ -36,19 +36,19 @@ module registers(
         begin
             if(rst == `RST_EN || srcA >= `NREG)
             begin
-                valA <= `DATA_WIDTH'H0;
+                valA = `DATA_WIDTH'H0;
             end
             else if(srcA == dstW)
             begin
-                valA <= valW;
+                valA = valW;
             end
             else if(srcA == dstE)
             begin
-                 valA <= valE;
+                 valA = valE;
             end
             else
             begin
-                valA <= registers[srcA];
+                valA = registers[srcA];
             end
         end
         
@@ -56,19 +56,19 @@ module registers(
         begin
             if(rst == `RST_EN || srcB >= `NREG)
             begin
-                valB <= `DATA_WIDTH'H0;
+                valB = `DATA_WIDTH'H0;
             end
             else if(srcB == dstW)
             begin
-                valB <= valW;
+                valB = valW;
             end
             else if(srcB == dstE)
             begin
-                valB <= valE;
+                valB = valE;
             end
             else
             begin
-                valB <= registers[srcB];
+                valB = registers[srcB];
             end
         end
 endmodule
