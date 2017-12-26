@@ -93,6 +93,9 @@ module y86cpu(
       // mem
       wire [`ADDR_BUS]      addr;
       wire write;
+
+      // set_m_stat
+      wire [`STAT_BUS]      m_stat;
       
       // registers
       wire [`DATA_BUS]      r_valA;
@@ -301,11 +304,19 @@ module y86cpu(
             .write(write)
       );
 
+      set_m_stat y86_set_m_stat
+      (
+            .M_stat_i(M_stat),
+            .mem_error_i(d_mem_error),
+
+            .m_stat_o(m_stat)
+      );
+
       write_reg y86_write_reg
       (
             .clk(clk),
             .rst(rst),
-            .m_stat_i(M_stat),
+            .m_stat_i(m_stat),
             .M_icode_i(M_icode),
             .M_valE_i(M_valE),
             .m_valM_i(data),

@@ -22,7 +22,7 @@ module write_reg(
         begin
             if(rst == `RST_EN)
             begin
-                W_stat_o <= `AOK;
+                W_stat_o <= `SAOK;
                 W_icode_o <= `NOP;
                 W_valE_o <= `DATA_WIDTH'H0;
                 W_valM_o <= `DATA_WIDTH'H0;

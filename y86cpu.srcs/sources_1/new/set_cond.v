@@ -25,7 +25,7 @@ module set_cond(
     
     always @(*)
     begin
-        if(/* W_stat_i == `AOK && m_stat_i == `AOK && */
+        if(/* W_stat_i == `SAOK && m_stat_i == `SAOK && */
           (E_icode_i == `OPQ || (E_icode_i == `IXX && E_ifun_i != `IRMOVQ)))
             begin
                 ZF = ZF_i;

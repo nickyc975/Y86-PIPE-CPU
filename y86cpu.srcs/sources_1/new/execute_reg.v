@@ -28,7 +28,7 @@ module execute_reg(
         begin
             if(rst == `RST_EN)
             begin
-                E_stat_o <= `AOK;
+                E_stat_o <= `SAOK;
                 E_icode_o <= `ICODE_WIDTH'H0;
                 E_ifun_o <= `IFUN_WIDTH'H0;
                 E_valA_o <= `DATA_WIDTH'H0;
