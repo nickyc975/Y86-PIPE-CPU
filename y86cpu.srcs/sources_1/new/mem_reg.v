@@ -4,6 +4,7 @@ module mem_reg(
     input wire clk,
     input wire rst,
     input wire e_Cnd_i,
+    input wire M_bubble_i,
     input wire [`STAT_BUS] E_stat_i,
     input wire [`ICODE_BUS] E_icode_i,
     input wire [`DATA_BUS] e_valE_i,
@@ -26,6 +27,16 @@ module mem_reg(
             begin
                 M_Cnd_o  <= 1'B0;
                 M_stat_o <= `STAT_WIDTH'B0;
+                M_icode_o <= `ICODE_WIDTH'H0;
+                M_valE_o <= `DATA_WIDTH'H0;
+                M_valA_o <= `DATA_WIDTH'H0;
+                M_dstE_o <= `NREG;
+                M_dstM_o <= `NREG;
+            end
+            else if(M_bubble_i == 1'B1)
+            begin
+                M_Cnd_o  <= e_Cnd_i;
+                M_stat_o <= `SBUB;
                 M_icode_o <= `NOP;
                 M_valE_o <= `DATA_WIDTH'H0;
                 M_valA_o <= `DATA_WIDTH'H0;

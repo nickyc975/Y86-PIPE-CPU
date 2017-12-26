@@ -23,6 +23,15 @@ module y86cpu(
       wire i_mem_error;
       wire d_mem_error;
 
+      // controller
+      wire F_stall;
+      wire D_bubble;
+      wire D_stall;
+      wire E_bubble;
+      wire set_cc;
+      wire M_bubble;
+      wire W_stall;
+
       // fetch_reg
       wire [`ADDR_BUS]      F_predPC;
 
@@ -121,10 +130,32 @@ module y86cpu(
       assign data_o[`DATA_BUS] = M_valA;
       assign pc_o[`ADDR_BUS] = f_pc;
 
+      controller y86_controller
+      (
+            .D_icode_i(D_icode),
+            .D_rA_i(D_rA),
+            .D_rB_i(D_rB),
+            .E_icode_i(E_icode),
+            .E_dstM_i(E_dstM),
+            .e_Cnd_i(e_Cnd),
+            .M_icode_i(M_icode),
+            .m_stat_i(m_stat),
+            .W_stat_i(W_stat),
+
+            .F_stall_o(F_stall),
+            .D_bubble_o(D_bubble),
+            .D_stall_o(D_stall),
+            .E_bubble_o(E_bubble),
+            .set_cc_o(set_cc),
+            .M_bubble_o(M_bubble),
+            .W_stall_o(W_stall)
+      );
+
       fetch_reg y86_fetch_reg
       (
             .clk(clk),
             .rst(rst),
+            .F_stall_i(F_stall),
             .f_predPC_i(f_predPC),
 
             .F_predPC_o(F_predPC)
@@ -164,6 +195,8 @@ module y86cpu(
       (
             .clk(clk),
             .rst(rst),
+            .D_stall_i(D_stall),
+            .D_bubble_i(D_bubble),
             .f_icode_i(f_icode),
             .f_ifun_i(f_ifun),
             .f_rA_i(f_rA),
@@ -212,6 +245,7 @@ module y86cpu(
       (
             .clk(clk),
             .rst(rst),
+            .E_bubble_i(E_bubble),
             .D_stat_i(D_stat),
             .D_icode_i(D_icode),
             .D_ifun_i(D_ifun),
@@ -260,8 +294,7 @@ module y86cpu(
 
       set_cond y86_set_cond
       (
-            .W_stat_i(W_stat),
-            .m_stat_i(M_stat),
+            .set_cc_i(set_cc),
             .E_icode_i(E_icode),
             .E_ifun_i(E_ifun),
             .E_dstE_i(E_dstE),
@@ -278,6 +311,7 @@ module y86cpu(
             .clk(clk),
             .rst(rst),
             .e_Cnd_i(e_Cnd),
+            .M_bubble_i(M_bubble),
             .E_stat_i(E_stat),
             .E_icode_i(E_icode),
             .e_dstE_i(e_dstE),
@@ -316,6 +350,7 @@ module y86cpu(
       (
             .clk(clk),
             .rst(rst),
+            .W_stall_i(W_stall),
             .m_stat_i(m_stat),
             .M_icode_i(M_icode),
             .M_valE_i(M_valE),

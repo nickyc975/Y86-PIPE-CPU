@@ -3,6 +3,7 @@
 module execute_reg(
     input wire clk,
     input wire rst,
+    input wire E_bubble_i,
     input wire [`STAT_BUS] D_stat_i,
     input wire [`ICODE_BUS] D_icode_i,
     input wire [`IFUN_BUS] D_ifun_i,
@@ -30,6 +31,17 @@ module execute_reg(
             begin
                 E_stat_o <= `SAOK;
                 E_icode_o <= `ICODE_WIDTH'H0;
+                E_ifun_o <= `IFUN_WIDTH'H0;
+                E_valA_o <= `DATA_WIDTH'H0;
+                E_valB_o <= `DATA_WIDTH'H0;
+                E_valC_o <= `DATA_WIDTH'H0;
+                E_dstE_o <= `NREG;
+                E_dstM_o <= `NREG;
+            end
+            else if(E_bubble_i == 1'B1)
+            begin
+                E_stat_o <= `SBUB;
+                E_icode_o <= `NOP;
                 E_ifun_o <= `IFUN_WIDTH'H0;
                 E_valA_o <= `DATA_WIDTH'H0;
                 E_valB_o <= `DATA_WIDTH'H0;

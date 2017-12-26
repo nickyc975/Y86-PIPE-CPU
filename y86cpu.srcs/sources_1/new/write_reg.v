@@ -3,6 +3,7 @@
 module write_reg(
     input wire clk,
     input wire rst,
+    input wire W_stall_i,
     input wire [`STAT_BUS] m_stat_i,
     input wire [`ICODE_BUS] M_icode_i,
     input wire [`DATA_BUS] M_valE_i,
@@ -28,6 +29,15 @@ module write_reg(
                 W_valM_o <= `DATA_WIDTH'H0;
                 W_dstE_o <= `NREG;
                 W_dstM_o <= `NREG;
+            end
+            else if(W_stall_i == 1'B1)
+            begin
+                W_stat_o <= W_stat_o;
+                W_icode_o <= W_icode_o;
+                W_valE_o <= W_valE_o;
+                W_valM_o <= W_valM_o;
+                W_dstE_o <= W_dstE_o;
+                W_dstM_o <= W_dstM_o;
             end
             else
             begin

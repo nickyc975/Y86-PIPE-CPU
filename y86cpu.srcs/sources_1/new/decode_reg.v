@@ -3,6 +3,8 @@
 module decode_reg(
     input wire rst,
     input wire clk,
+    input wire D_stall_i,
+    input wire D_bubble_i,
     input wire [`ICODE_BUS] f_icode_i,
     input wire [`IFUN_BUS] f_ifun_i,
     input wire [`REG_ADDR_BUS] f_rA_i,
@@ -37,6 +39,30 @@ module decode_reg(
                 D_dstE_o <= `NREG;
                 D_dstM_o <= `NREG;
                 D_stat_o <= `STAT_WIDTH'H0;
+            end
+        else if(D_stall_i == 1'B1)
+            begin
+                D_icode_o <= D_icode_o;
+                D_ifun_o <= D_ifun_o;
+                D_rA_o <= D_rA_o;
+                D_rB_o <= D_rB_o;
+                D_valC_o <= D_valC_o;
+                D_valP_o <= D_valP_o;
+                D_dstE_o <= D_dstE_o;
+                D_dstM_o <= D_dstM_o;
+                D_stat_o <= D_stat_o;
+            end
+        else if(D_bubble_i == 1'B1)
+            begin
+                D_icode_o <= `NOP;
+                D_ifun_o <= `IFUN_WIDTH'H0;
+                D_rA_o <= `NREG;
+                D_rB_o <= `NREG;
+                D_valC_o <= `DATA_WIDTH'H0;
+                D_valP_o <= `ADDR_WIDTH'H0;
+                D_dstE_o <= `NREG;
+                D_dstM_o <= `NREG;
+                D_stat_o <= `SBUB;
             end
         else
             begin

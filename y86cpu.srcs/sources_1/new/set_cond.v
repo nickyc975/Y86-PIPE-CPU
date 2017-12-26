@@ -1,8 +1,7 @@
 `include "define.v"
 
 module set_cond(
-    input wire [`STAT_BUS] W_stat_i,
-    input wire [`STAT_BUS] m_stat_i,
+    input wire set_cc_i,
     input wire [`ICODE_BUS] E_icode_i,
     input wire [`IFUN_BUS] E_ifun_i,
     input wire [`REG_ADDR_BUS] E_dstE_i,
@@ -25,8 +24,7 @@ module set_cond(
     
     always @(*)
     begin
-        if(/* W_stat_i == `SAOK && m_stat_i == `SAOK && */
-          (E_icode_i == `OPQ || (E_icode_i == `IXX && E_ifun_i != `IRMOVQ)))
+        if(set_cc_i == 1'B1 && (E_icode_i == `OPQ || (E_icode_i == `IXX && E_ifun_i != `IRMOVQ)))
             begin
                 ZF = ZF_i;
                 SF = SF_i;

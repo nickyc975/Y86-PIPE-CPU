@@ -1,8 +1,9 @@
 `include "define.v"
 
 module fetch_reg(
-    input clk,
-    input rst,
+    input wire clk,
+    input wire rst,
+    input wire F_stall_i,
     input wire [`ADDR_BUS] f_predPC_i,
     output reg [`ADDR_BUS] F_predPC_o
     );
@@ -18,9 +19,13 @@ module fetch_reg(
             begin
                 F_predPC_o <= `ADDR_WIDTH'H0;
             end
-            else
+            else if(F_stall_i == 1'B0)
             begin
                 F_predPC_o <= f_predPC_i;
+            end
+            else
+            begin
+                F_predPC_o <= F_predPC_o;
             end
         end
 endmodule
