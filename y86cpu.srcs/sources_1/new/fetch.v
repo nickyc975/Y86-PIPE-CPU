@@ -1,148 +1,158 @@
 `include "define.v"
 
 module fetch(
-    input wire [`ADDR_BUS] f_pc,
+    input wire [`ADDR_BUS] f_pc_i,
     input wire [`INST_BUS] inst_i,
+    input wire mem_error_i,
     
-    output reg [`ICODE_BUS] icode,
-    output reg [`IFUN_BUS] ifun,
-    output reg [`REG_ADDR_BUS] rA,
-    output reg [`REG_ADDR_BUS] rB,
-    output reg [`DATA_BUS] valC,
-    output reg [`ADDR_BUS] valP,
-    output reg [`REG_ADDR_BUS] dstE,
-    output reg [`REG_ADDR_BUS] dstM,
-    output reg [`STAT_BUS] stat,
-    output reg [`ADDR_BUS] predPC
+    output reg [`ICODE_BUS] f_icode_o,
+    output reg [`IFUN_BUS] f_ifun_o,
+    output reg [`REG_ADDR_BUS] f_rA_o,
+    output reg [`REG_ADDR_BUS] f_rB_o,
+    output reg [`DATA_BUS] f_valC_o,
+    output reg [`ADDR_BUS] f_valP_o,
+    output reg [`REG_ADDR_BUS] f_dstE_o,
+    output reg [`REG_ADDR_BUS] f_dstM_o,
+    output reg [`ADDR_BUS] f_predPC_o,
+    output reg [`STAT_BUS] f_stat_o
+    
     );
     
-    always @(f_pc, inst_i)
+    always @(f_pc_i, inst_i, mem_error_i)
     begin
-        icode = inst_i[`ICODE];
-        ifun = inst_i[`IFUN];
-        rA = `NREG;
-        rB = `NREG;
-        valC = `DATA_WIDTH'H0;
-        valP = `DATA_WIDTH'H0;
-        dstE = `NREG;
-        dstM = `NREG;
-        predPC = `ADDR_WIDTH'H0;
-        case(icode)
-            `HALT:
-                begin
-                    valP = f_pc + `ADDR_WIDTH'H1;
-                    predPC = valP;
-                    stat = `SHLT;
-                end
-            `NOP:
-                begin
-                    valP = f_pc + `ADDR_WIDTH'H1;
-                    predPC = valP;
-                    stat = `AOK;
-                end
-            `CXX:
-                begin
-                    rA = inst_i[`SRCA];
-                    rB = inst_i[`SRCB];
-                    valP = f_pc + `ADDR_WIDTH'H2;
-                    predPC = valP;
-                    dstE = rB;
-                    stat = `AOK;
-                end
-            `OPQ:
-                begin
-                    rA = inst_i[`SRCA];
-                    rB = inst_i[`SRCB];
-                    valP = f_pc + `ADDR_WIDTH'H2;
-                    predPC = valP;
-                    dstE = rB;
-                    stat = `AOK;
-                end
-            `IXX:
-                begin
-                    rA = inst_i[`SRCA];
-                    rB = inst_i[`SRCB];
-                    valC = {inst_i[`BYTE0], inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3],
-                            inst_i[`BYTE4], inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7]};
-                    valP = f_pc + `ADDR_WIDTH'HA;
-                    predPC = valP;
-                    dstE = rB;
-                    stat = `AOK;
-                end
-            `RMMOVQ:
-                begin
-                    rA = inst_i[`SRCA];
-                    rB = inst_i[`SRCB];
-                    valC = {inst_i[`BYTE0], inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3],
-                            inst_i[`BYTE4], inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7]};
-                    valP = f_pc + `ADDR_WIDTH'HA;
-                    predPC = valP;
-                    stat = `AOK;
-                end
-            `MRMOVQ:
-                begin
-                    rA = inst_i[`SRCA];
-                    rB = inst_i[`SRCB];
-                    valC = {inst_i[`BYTE0], inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3],
-                            inst_i[`BYTE4], inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7]};
-                    valP = f_pc + `ADDR_WIDTH'HA;
-                    predPC = valP;
-                    dstM = rB;
-                    stat = `AOK;
-                end
-            `JXX:
-                begin
-                    valC = {inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3], inst_i[`BYTE4],
-                            inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7], inst_i[`BYTE8]};
-                    valP = f_pc + `ADDR_WIDTH'H9;
-                    predPC = valC;
-                    stat = `AOK;
-                end
-             `CALL:
-                begin
-                    rA = `RSP;
-                    rB = `RSP;
-                    valC = {inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3], inst_i[`BYTE4],
-                            inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7], inst_i[`BYTE8]};
-                    valP = f_pc + `ADDR_WIDTH'H9;
-                    predPC = valC;
-                    dstM = `RSP;
-                    stat = `AOK;
-                end
-            `RET:
-                begin
-                    rA = `RSP;
-                    rB = `RSP;
-                    valP = f_pc + `ADDR_WIDTH'H1;
-                    dstE = `RSP;
-                    stat = `AOK;
-                end
-            `PUSHQ:
-                begin
-                    rA = inst_i[`SRCA];
-                    rB = `RSP;
-                    valP = f_pc + `ADDR_WIDTH'H2;
-                    predPC = valP;
-                    dstE = `RSP;
-                    stat = `AOK;
-                end
-            `POPQ:
-                begin
-                    rA = `RSP;
-                    rB = `RSP;
-                    valP = f_pc + `ADDR_WIDTH'H2;
-                    predPC = valP;
-                    dstE = `RSP;
-                    dstM = inst_i[`SRCA];
-                    stat = `AOK;
-                end
-            default:
-                begin
-                    valP = f_pc + `ADDR_WIDTH'H1;
-                    predPC = valP;
-                    stat = `SINS;
-                end
-        endcase
+        f_icode_o = inst_i[`ICODE];
+        f_ifun_o = inst_i[`IFUN];
+        f_rA_o = `NREG;
+        f_rB_o = `NREG;
+        f_valC_o = `DATA_WIDTH'H0;
+        f_valP_o = `DATA_WIDTH'H0;
+        f_dstE_o = `NREG;
+        f_dstM_o = `NREG;
+        f_stat_o = `AOK;
+        f_predPC_o = `ADDR_WIDTH'H0;
+        if(mem_error_i == 1'B0)
+        begin
+            case(f_icode_o)
+                `HALT:
+                    begin
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H1;
+                        f_predPC_o = f_valP_o;
+                        f_stat_o = `SHLT;
+                    end
+                `NOP:
+                    begin
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H1;
+                        f_predPC_o = f_valP_o;
+                        f_stat_o = `AOK;
+                    end
+                `CXX:
+                    begin
+                        f_rA_o = inst_i[`SRCA];
+                        f_rB_o = inst_i[`SRCB];
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H2;
+                        f_predPC_o = f_valP_o;
+                        f_dstE_o = f_rB_o;
+                        f_stat_o = `AOK;
+                    end
+                `OPQ:
+                    begin
+                        f_rA_o = inst_i[`SRCA];
+                        f_rB_o = inst_i[`SRCB];
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H2;
+                        f_predPC_o = f_valP_o;
+                        f_dstE_o = f_rB_o;
+                        f_stat_o = `AOK;
+                    end
+                `IXX:
+                    begin
+                        f_rA_o = inst_i[`SRCA];
+                        f_rB_o = inst_i[`SRCB];
+                        f_valC_o = {inst_i[`BYTE0], inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3],
+                                inst_i[`BYTE4], inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7]};
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'HA;
+                        f_predPC_o = f_valP_o;
+                        f_dstE_o = f_rB_o;
+                        f_stat_o = `AOK;
+                    end
+                `RMMOVQ:
+                    begin
+                        f_rA_o = inst_i[`SRCA];
+                        f_rB_o = inst_i[`SRCB];
+                        f_valC_o = {inst_i[`BYTE0], inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3],
+                                inst_i[`BYTE4], inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7]};
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'HA;
+                        f_predPC_o = f_valP_o;
+                        f_stat_o = `AOK;
+                    end
+                `MRMOVQ:
+                    begin
+                        f_rA_o = inst_i[`SRCA];
+                        f_rB_o = inst_i[`SRCB];
+                        f_valC_o = {inst_i[`BYTE0], inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3],
+                                inst_i[`BYTE4], inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7]};
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'HA;
+                        f_predPC_o = f_valP_o;
+                        f_dstM_o = f_rB_o;
+                        f_stat_o = `AOK;
+                    end
+                `JXX:
+                    begin
+                        f_valC_o = {inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3], inst_i[`BYTE4],
+                                inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7], inst_i[`BYTE8]};
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H9;
+                        f_predPC_o = f_valC_o;
+                        f_stat_o = `AOK;
+                    end
+                 `CALL:
+                    begin
+                        f_rA_o = `RSP;
+                        f_rB_o = `RSP;
+                        f_valC_o = {inst_i[`BYTE1], inst_i[`BYTE2], inst_i[`BYTE3], inst_i[`BYTE4],
+                                inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7], inst_i[`BYTE8]};
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H9;
+                        f_predPC_o = f_valC_o;
+                        f_dstM_o = `RSP;
+                        f_stat_o = `AOK;
+                    end
+                `RET:
+                    begin
+                        f_rA_o = `RSP;
+                        f_rB_o = `RSP;
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H1;
+                        f_dstE_o = `RSP;
+                        f_stat_o = `AOK;
+                    end
+                `PUSHQ:
+                    begin
+                        f_rA_o = inst_i[`SRCA];
+                        f_rB_o = `RSP;
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H2;
+                        f_predPC_o = f_valP_o;
+                        f_dstE_o = `RSP;
+                        f_stat_o = `AOK;
+                    end
+                `POPQ:
+                    begin
+                        f_rA_o = `RSP;
+                        f_rB_o = `RSP;
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H2;
+                        f_predPC_o = f_valP_o;
+                        f_dstE_o = `RSP;
+                        f_dstM_o = inst_i[`SRCA];
+                        f_stat_o = `AOK;
+                    end
+                default:
+                    begin
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H1;
+                        f_predPC_o = f_valP_o;
+                        f_stat_o = `SINS;
+                    end
+            endcase
+        end
+        else
+        begin
+            f_stat_o = `SMEM;
+        end
     end
 
 endmodule

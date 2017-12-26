@@ -1,265 +1,322 @@
 module y86cpu(
-      input rst,
-      input clk,
-      input [79:0]inst,
-      input [63:0]data_i,
+      input wire rst_i,
+      input wire clk_i,
+      input wire [79:0] inst_i,
+      input wire [63:0] data_i,
+      input wire i_mem_error_i,
+      input wire d_mem_error_i,
 
-      output rw,
-      output [63:0]pc,
-      output [63:0]addr,
-      output [63:0]data_o
+      output wire write_o,
+      output wire [63:0] pc_o,
+      output wire [63:0] addr_o,
+      output wire [63:0] data_o
       );
   
   
 
-  wire alu_0_OF;
-  wire alu_0_SF;
-  wire alu_0_ZF;
-  wire [63:0]alu_0_e_valE;
-  wire [63:0]alu_args_0_aluA;
-  wire [63:0]alu_args_0_aluB;
-  wire [3:0]alu_args_0_fun;
-  wire clk_1;
-  wire [63:0]d_mem_0_data_o;
-  wire [63:0]decode_0_valA;
-  wire [63:0]decode_0_valB;
-  wire [3:0]decode_reg_0_dstE_o;
-  wire [3:0]decode_reg_0_dstM_o;
-  wire [3:0]decode_reg_0_icode_o;
-  wire [3:0]decode_reg_0_ifun_o;
-  wire [3:0]decode_reg_0_rA_o;
-  wire [3:0]decode_reg_0_rB_o;
-  wire [2:0]decode_reg_0_stat_o;
-  wire [63:0]decode_reg_0_valC_o;
-  wire [63:0]decode_reg_0_valP_o;
-  wire [3:0]execute_reg_0_E_dstE;
-  wire [3:0]execute_reg_0_E_dstM;
-  wire [3:0]execute_reg_0_E_icode;
-  wire [3:0]execute_reg_0_E_ifun;
-  wire [2:0]execute_reg_0_E_stat;
-  wire [63:0]execute_reg_0_E_valA;
-  wire [63:0]execute_reg_0_E_valB;
-  wire [63:0]execute_reg_0_E_valC;
-  wire [3:0]fetch_0_dstE;
-  wire [3:0]fetch_0_dstM;
-  wire [3:0]fetch_0_icode;
-  wire [3:0]fetch_0_ifun;
-  wire [63:0]fetch_0_predPC;
-  wire [3:0]fetch_0_rA;
-  wire [3:0]fetch_0_rB;
-  wire [2:0]fetch_0_stat;
-  wire [63:0]fetch_0_valC;
-  wire [63:0]fetch_0_valP;
-  wire [63:0]fetch_reg_0_predPC_o;
-  wire [79:0]inst_1;
-  wire [63:0]mem_0_addr;
-  wire mem_0_write;
-  wire mem_reg_0_M_Cnd;
-  wire [3:0]mem_reg_0_M_dstE;
-  wire [3:0]mem_reg_0_M_dstM;
-  wire [3:0]mem_reg_0_M_icode;
-  wire [2:0]mem_reg_0_M_stat;
-  wire [63:0]mem_reg_0_M_valA;
-  wire [63:0]mem_reg_0_M_valE;
-  wire [63:0]registers_0_valA;
-  wire [63:0]registers_0_valB;
-  wire rst_1;
-  wire [63:0]select_pc_0_f_pc;
-  wire set_cond_0_e_Cnd;
-  wire [3:0]set_cond_0_e_dstE;
-  wire [3:0]write_reg_0_W_dstE;
-  wire [3:0]write_reg_0_W_dstM;
-  wire [3:0]write_reg_0_W_icode;
-  wire [2:0]write_reg_0_W_stat;
-  wire [63:0]write_reg_0_W_valE;
-  wire [63:0]write_reg_0_W_valM;
+      wire clk;
+      wire rst;
+      wire [79:0] inst;
+      wire [63:0] data;
+      wire i_mem_error;
+      wire d_mem_error;
 
-  assign addr[63:0] = mem_0_addr;
-  assign clk_1 = clk;
-  assign d_mem_0_data_o = data_i[63:0];
-  assign data_o[63:0] = mem_reg_0_M_valA;
-  assign inst_1 = inst[79:0];
-  assign pc[63:0] = select_pc_0_f_pc;
-  assign rst_1 = rst;
-  assign rw = mem_0_write;
+      wire [63:0] F_predPC;
 
-  alu alu_0
-       (.OF(alu_0_OF),
-        .SF(alu_0_SF),
-        .ZF(alu_0_ZF),
-        .aluA(alu_args_0_aluA),
-        .aluB(alu_args_0_aluB),
-        .e_valE(alu_0_e_valE),
-        .fun(alu_args_0_fun));
+      wire [63:0] f_pc;
+      
+      wire [3:0]  f_icode;
+      wire [3:0]  f_ifun;
+      wire [3:0]  f_rA;
+      wire [3:0]  f_rB;
+      wire [63:0] f_valC;
+      wire [63:0] f_valP;
+      wire [3:0]  f_dstE;
+      wire [3:0]  f_dstM;
+      wire [63:0] f_predPC;
+      wire [2:0]  f_stat;
+      
+      wire [3:0]  D_icode;
+      wire [3:0]  D_ifun;
+      wire [3:0]  D_rA;
+      wire [3:0]  D_rB;
+      wire [63:0] D_valC;
+      wire [63:0] D_valP;
+      wire [3:0]  D_dstE;
+      wire [3:0]  D_dstM;
+      wire [2:0]  D_stat;
 
-  alu_args alu_args_0
-       (.E_icode(execute_reg_0_E_icode),
-        .E_ifun(execute_reg_0_E_ifun),
-        .E_valA(execute_reg_0_E_valA),
-        .E_valB(execute_reg_0_E_valB),
-        .E_valC(execute_reg_0_E_valC),
-        .aluA(alu_args_0_aluA),
-        .aluB(alu_args_0_aluB),
-        .fun(alu_args_0_fun));
+      wire [63:0] d_valA;
+      wire [63:0] d_valB;
 
-  decode decode_0
-       (.M_dstE(mem_reg_0_M_dstE),
-        .M_dstM(mem_reg_0_M_dstM),
-        .M_valE(mem_reg_0_M_valE),
-        .W_dstE(write_reg_0_W_dstE),
-        .W_dstM(write_reg_0_W_dstM),
-        .W_valE(write_reg_0_W_valE),
-        .W_valM(write_reg_0_W_valM),
-        .d_rvalA(registers_0_valA),
-        .d_rvalB(registers_0_valB),
-        .d_srcA(decode_reg_0_rA_o),
-        .d_srcB(decode_reg_0_rB_o),
-        .e_dstE(set_cond_0_e_dstE),
-        .e_valE(alu_0_e_valE),
-        .icode(decode_reg_0_icode_o),
-        .m_valM(d_mem_0_data_o),
-        .valA(decode_0_valA),
-        .valB(decode_0_valB),
-        .valP(decode_reg_0_valP_o));
+      wire [2:0]  E_stat;
+      wire [3:0]  E_icode;
+      wire [3:0]  E_ifun;
+      wire [63:0] E_valC;
+      wire [63:0] E_valA;
+      wire [63:0] E_valB;
+      wire [3:0]  E_dstE;
+      wire [3:0]  E_dstM;
 
-  decode_reg decode_reg_0
-       (.clk(clk_1),
-        .dstE_i(fetch_0_dstE),
-        .dstE_o(decode_reg_0_dstE_o),
-        .dstM_i(fetch_0_dstM),
-        .dstM_o(decode_reg_0_dstM_o),
-        .icode_i(fetch_0_icode),
-        .icode_o(decode_reg_0_icode_o),
-        .ifun_i(fetch_0_ifun),
-        .ifun_o(decode_reg_0_ifun_o),
-        .rA_i(fetch_0_rA),
-        .rA_o(decode_reg_0_rA_o),
-        .rB_i(fetch_0_rB),
-        .rB_o(decode_reg_0_rB_o),
-        .rst(rst_1),
-        .stat_i(fetch_0_stat),
-        .stat_o(decode_reg_0_stat_o),
-        .valC_i(fetch_0_valC),
-        .valC_o(decode_reg_0_valC_o),
-        .valP_i(fetch_0_valP),
-        .valP_o(decode_reg_0_valP_o));
+      wire [63:0] aluA;
+      wire [63:0] aluB;
+      wire [3:0]  fun;
 
-  execute_reg execute_reg_0
-       (.D_icode(decode_reg_0_icode_o),
-        .D_ifun(decode_reg_0_ifun_o),
-        .D_stat(decode_reg_0_stat_o),
-        .D_valC(decode_reg_0_valC_o),
-        .E_dstE(execute_reg_0_E_dstE),
-        .E_dstM(execute_reg_0_E_dstM),
-        .E_icode(execute_reg_0_E_icode),
-        .E_ifun(execute_reg_0_E_ifun),
-        .E_stat(execute_reg_0_E_stat),
-        .E_valA(execute_reg_0_E_valA),
-        .E_valB(execute_reg_0_E_valB),
-        .E_valC(execute_reg_0_E_valC),
-        .clk(clk_1),
-        .d_dstE(decode_reg_0_dstE_o),
-        .d_dstM(decode_reg_0_dstM_o),
-        .d_srcA(decode_reg_0_rA_o),
-        .d_srcB(decode_reg_0_rB_o),
-        .d_valA(decode_0_valA),
-        .d_valB(decode_0_valB),
-        .rst(rst_1));
+      wire [63:0] e_valE;
+      wire OF;
+      wire SF;
+      wire ZF;
 
-  fetch fetch_0
-       (.dstE(fetch_0_dstE),
-        .dstM(fetch_0_dstM),
-        .f_pc(select_pc_0_f_pc),
-        .icode(fetch_0_icode),
-        .ifun(fetch_0_ifun),
-        .inst_i(inst_1),
-        .predPC(fetch_0_predPC),
-        .rA(fetch_0_rA),
-        .rB(fetch_0_rB),
-        .stat(fetch_0_stat),
-        .valC(fetch_0_valC),
-        .valP(fetch_0_valP));
+      wire e_Cnd;
+      wire [3:0]  e_dstE;
 
-  fetch_reg fetch_reg_0
-       (.clk(clk_1),
-        .predPC_i(fetch_0_predPC),
-        .predPC_o(fetch_reg_0_predPC_o),
-        .rst(rst_1));
+      wire M_Cnd;
+      wire [2:0]  M_stat;
+      wire [3:0]  M_icode;
+      wire [3:0]  M_dstE;
+      wire [63:0] M_valA;
+      wire [63:0] M_valE;
+      wire [3:0]  M_dstM;
 
-  mem mem_0
-       (.M_icode(mem_reg_0_M_icode),
-        .M_valA(mem_reg_0_M_valA),
-        .M_valE(mem_reg_0_M_valE),
-        .addr(mem_0_addr),
-        .write(mem_0_write));
+      wire [63:0] addr;
+      wire write;
+      
+      wire [63:0] r_valA;
+      wire [63:0] r_valB;
+      
+      wire [2:0]  W_stat;
+      wire [3:0]  W_icode;
+      wire [3:0]  W_dstE;
+      wire [3:0]  W_dstM;
+      wire [63:0] W_valE;
+      wire [63:0] W_valM;
 
-  mem_reg mem_reg_0
-       (.E_dstM(execute_reg_0_E_dstM),
-        .E_icode(execute_reg_0_E_icode),
-        .E_stat(execute_reg_0_E_stat),
-        .M_Cnd(mem_reg_0_M_Cnd),
-        .M_dstE(mem_reg_0_M_dstE),
-        .M_dstM(mem_reg_0_M_dstM),
-        .M_icode(mem_reg_0_M_icode),
-        .M_stat(mem_reg_0_M_stat),
-        .M_valA(mem_reg_0_M_valA),
-        .M_valE(mem_reg_0_M_valE),
-        .clk(clk_1),
-        .e_Cnd(set_cond_0_e_Cnd),
-        .e_dstE(set_cond_0_e_dstE),
-        .e_valA(execute_reg_0_E_valA),
-        .e_valE(alu_0_e_valE),
-        .rst(rst_1));
+      assign clk = clk_i;
+      assign rst = rst_i;
+      assign inst = inst_i[79:0];
+      assign data = data_i[63:0];
+      assign i_mem_error = i_mem_error_i;
+      assign d_mem_error = d_mem_error_i;
 
-  registers registers_0
-       (.clk(clk_1),
-        .dstE(write_reg_0_W_dstE),
-        .dstW(write_reg_0_W_dstM),
-        .rst(rst_1),
-        .srcA(decode_reg_0_rA_o),
-        .srcB(decode_reg_0_rB_o),
-        .valA(registers_0_valA),
-        .valB(registers_0_valB),
-        .valE(write_reg_0_W_valE),
-        .valW(write_reg_0_W_valM));
+      assign write_o = write;
+      assign addr_o[63:0] = addr;
+      assign data_o[63:0] = M_valA;
+      assign pc_o[63:0] = f_pc;
 
-  select_pc select_pc_0
-       (.F_predPC(fetch_reg_0_predPC_o),
-        .M_Cnd(mem_reg_0_M_Cnd),
-        .M_icode(mem_reg_0_M_icode),
-        .M_valA(mem_reg_0_M_valA),
-        .W_icode(write_reg_0_W_icode),
-        .W_valM(write_reg_0_W_valM),
-        .f_pc(select_pc_0_f_pc),
-        .rst(rst_1));
+      fetch_reg y86_fetch_reg
+      (
+            .clk(clk),
+            .rst(rst),
+            .f_predPC_i(f_predPC),
 
-  set_cond set_cond_0
-       (.E_icode(execute_reg_0_E_icode),
-        .E_ifun(execute_reg_0_E_ifun),
-        .E_dstE(execute_reg_0_E_dstE),
-        .OF_i(alu_0_OF),
-        .SF_i(alu_0_SF),
-        .W_stat(write_reg_0_W_stat),
-        .ZF_i(alu_0_ZF),
-        .clk(clk_1),
-        .e_Cnd(set_cond_0_e_Cnd),
-        .e_dstE(set_cond_0_e_dstE),
-        .m_stat(mem_reg_0_M_stat),
-        .rst(rst_1));
-        
-  write_reg write_reg_0
-       (.M_dstE(mem_reg_0_M_dstE),
-        .M_dstM(mem_reg_0_M_dstM),
-        .M_icode(mem_reg_0_M_icode),
-        .M_valE(mem_reg_0_M_valE),
-        .W_dstE(write_reg_0_W_dstE),
-        .W_dstM(write_reg_0_W_dstM),
-        .W_icode(write_reg_0_W_icode),
-        .W_stat(write_reg_0_W_stat),
-        .W_valE(write_reg_0_W_valE),
-        .W_valM(write_reg_0_W_valM),
-        .clk(clk_1),
-        .m_stat(mem_reg_0_M_stat),
-        .m_valM(d_mem_0_data_o),
-        .rst(rst_1));
+            .F_predPC_o(F_predPC)
+      );
+
+      select_pc y86_select_pc
+      (
+            .M_Cnd_i(M_Cnd),
+            .F_predPC_i(F_predPC),
+            .M_icode_i(M_icode),
+            .W_icode_i(W_icode),
+            .M_valA_i(M_valA),
+            .W_valM_i(W_valM),
+
+            .f_pc_o(f_pc)
+      );
+
+      fetch y86_fetch
+      (
+            .f_pc_i(f_pc),
+            .inst_i(inst),
+            .mem_error_i(i_mem_error),
+
+            .f_icode_o(f_icode),
+            .f_ifun_o(f_ifun),
+            .f_rA_o(f_rA),
+            .f_rB_o(f_rB),
+            .f_valC_o(f_valC),
+            .f_valP_o(f_valP),
+            .f_dstE_o(f_dstE),
+            .f_dstM_o(f_dstM),
+            .f_predPC_o(f_predPC),
+            .f_stat_o(f_stat)
+      );
+
+      decode_reg y86_decode_reg
+      (
+            .clk(clk),
+            .rst(rst),
+            .f_icode_i(f_icode),
+            .f_ifun_i(f_ifun),
+            .f_rA_i(f_rA),
+            .f_rB_i(f_rB),
+            .f_valC_i(f_valC),
+            .f_valP_i(f_valP),
+            .f_dstE_i(f_dstE),
+            .f_dstM_i(f_dstM),
+            .f_stat_i(f_stat),
+
+            .D_icode_o(D_icode),
+            .D_ifun_o(D_ifun),
+            .D_rA_o(D_rA),
+            .D_rB_o(D_rB),
+            .D_valC_o(D_valC),
+            .D_valP_o(D_valP),
+            .D_dstE_o(D_dstE),
+            .D_dstM_o(D_dstM),
+            .D_stat_o(D_stat)
+      );
+
+      decode y86_decode
+      (
+            .D_icode_i(D_icode),
+            .D_valP_i(D_valP),
+            .D_srcA_i(D_rA),
+            .D_srcB_i(D_rB),
+            .r_valA_i(r_valA),
+            .r_valB_i(r_valB),
+            .e_dstE_i(e_dstE),
+            .e_valE_i(e_valE),
+            .M_dstE_i(M_dstE),
+            .M_valE_i(M_valE),
+            .M_dstM_i(M_dstM),
+            .m_valM_i(data),
+            .W_dstE_i(W_dstE),
+            .W_valE_i(W_valE),
+            .W_dstM_i(W_dstM),
+            .W_valM_i(W_valM),
+            
+            .d_valA_o(d_valA),
+            .d_valB_o(d_valB)
+      );
+
+      execute_reg y86_execute_reg
+      (
+            .clk(clk),
+            .rst(rst),
+            .D_stat_i(D_stat),
+            .D_icode_i(D_icode),
+            .D_ifun_i(D_ifun),
+            .D_valC_i(D_valC),
+            .d_valA_i(d_valA),
+            .d_valB_i(d_valB),
+            .D_dstE_i(D_dstE),
+            .D_dstM_i(D_dstM),
+            .D_srcA_i(D_rA),
+            .D_srcB_i(D_rB),
+
+            .E_stat_o(E_stat),
+            .E_icode_o(E_icode),
+            .E_ifun_o(E_ifun),
+            .E_valC_o(E_valC),
+            .E_valA_o(E_valA),
+            .E_valB_o(E_valB),
+            .E_dstE_o(E_dstE),
+            .E_dstM_o(E_dstM)
+      );
+
+      alu_args y86_alu_args
+      (
+            .E_icode_i(E_icode),
+            .E_ifun_i(E_ifun),
+            .E_valC_i(E_valC),
+            .E_valA_i(E_valA),
+            .E_valB_i(E_valB),
+            
+            .aluA_o(aluA),
+            .aluB_o(aluB),
+            .fun_o(fun)
+      );
+
+      alu y86_alu
+      (
+            .aluA_i(aluA),
+            .aluB_i(aluB),
+            .fun_i(fun),
+
+            .e_valE_o(e_valE),
+            .ZF_o(ZF),
+            .SF_o(SF),
+            .OF_o(OF)
+      );
+
+      set_cond y86_set_cond
+      (
+            .W_stat_i(W_stat),
+            .m_stat_i(M_stat),
+            .E_icode_i(E_icode),
+            .E_ifun_i(E_ifun),
+            .E_dstE_i(E_dstE),
+            .ZF_i(ZF),
+            .SF_i(SF),
+            .OF_i(OF),
+
+            .e_Cnd_o(e_Cnd),
+            .e_dstE_o(e_dstE)
+      );
+
+      mem_reg y86_mem_reg
+      (
+            .clk(clk),
+            .rst(rst),
+            .e_Cnd_i(e_Cnd),
+            .E_stat_i(E_stat),
+            .E_icode_i(E_icode),
+            .e_dstE_i(e_dstE),
+            .e_valE_i(e_valE),
+            .E_dstM_i(E_dstM),
+            .E_valA_i(E_valA),
+            
+            .M_Cnd_o(M_Cnd),
+            .M_stat_o(M_stat),
+            .M_icode_o(M_icode),
+            .M_dstE_o(M_dstE),
+            .M_valE_o(M_valE),
+            .M_dstM_o(M_dstM),
+            .M_valA_o(M_valA)
+      );
+
+      mem y86_mem
+      (
+            .M_icode_i(M_icode),
+            .M_valA_i(M_valA),
+            .M_valE_i(M_valE),
+
+            .addr(addr),
+            .write(write)
+      );
+
+      write_reg y86_write_reg
+      (
+            .clk(clk),
+            .rst(rst),
+            .m_stat_i(M_stat),
+            .M_icode_i(M_icode),
+            .M_valE_i(M_valE),
+            .m_valM_i(data),
+            .M_dstE_i(M_dstE),
+            .M_dstM_i(M_dstM),
+            
+            .W_stat_o(W_stat),
+            .W_icode_o(W_icode),
+            .W_dstE_o(W_dstE),
+            .W_valE_o(W_valE),
+            .W_dstM_o(W_dstM),
+            .W_valM_o(W_valM)
+      );
+
+      registers y86_registers
+      (
+            .clk(clk),
+            .rst(rst),
+            .W_dstE_i(W_dstE),
+            .W_valE_i(W_valE),
+            .W_dstM_i(W_dstM),
+            .W_valM_i(W_valM),
+            .D_rA_i(D_rA),
+            .D_rB_i(D_rB),
+
+            .r_valA_o(r_valA),
+            .r_valB_o(r_valB)
+      );
 endmodule

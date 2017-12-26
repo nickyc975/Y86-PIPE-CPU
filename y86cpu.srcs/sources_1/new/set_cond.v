@@ -1,19 +1,17 @@
 `include "define.v"
 
 module set_cond(
-    input wire clk,
-    input wire rst,
-    input wire [`STAT_BUS] W_stat,
-    input wire [`STAT_BUS] m_stat,
-    input wire [`ICODE_BUS] E_icode,
-    input wire [`IFUN_BUS] E_ifun,
-    input wire [`REG_ADDR_BUS] E_dstE,
+    input wire [`STAT_BUS] W_stat_i,
+    input wire [`STAT_BUS] m_stat_i,
+    input wire [`ICODE_BUS] E_icode_i,
+    input wire [`IFUN_BUS] E_ifun_i,
+    input wire [`REG_ADDR_BUS] E_dstE_i,
     input wire ZF_i,
     input wire SF_i,
     input wire OF_i,
     
-    output reg e_Cnd,
-    output reg [`REG_ADDR_BUS] e_dstE
+    output reg e_Cnd_o,
+    output reg [`REG_ADDR_BUS] e_dstE_o
     );
     
     reg ZF, SF, OF;
@@ -27,8 +25,8 @@ module set_cond(
     
     always @(*)
     begin
-        if(rst != `RST_EN /* && W_stat == `AOK && m_stat == `AOK */ &&
-          (E_icode == `OPQ || (E_icode == `IXX && E_ifun != `IRMOVQ)))
+        if(/* W_stat_i == `AOK && m_stat_i == `AOK && */
+          (E_icode_i == `OPQ || (E_icode_i == `IXX && E_ifun_i != `IRMOVQ)))
             begin
                 ZF = ZF_i;
                 SF = SF_i;
@@ -40,26 +38,26 @@ module set_cond(
                 SF = SF;
                 OF = OF;
             end
-        if(E_icode == `JXX || E_icode == `CXX)
+        if(E_icode_i == `JXX || E_icode_i == `CXX)
             begin
-                case(E_ifun)
-                    `JLE:      e_Cnd = ZF || (!SF && OF) || SF;
-                     `JL:      e_Cnd = (!SF && OF) || SF;
-                     `JE:      e_Cnd = ZF;
-                    `JNE:      e_Cnd = !ZF;
-                    `JGE:      e_Cnd = ZF || (SF && OF) || !SF;
-                     `JG:      e_Cnd = (SF && OF) || !SF;
-                     default:  e_Cnd = 1'B1;
+                case(E_ifun_i)
+                    `JLE:      e_Cnd_o = ZF || (!SF && OF) || SF;
+                     `JL:      e_Cnd_o = (!SF && OF) || SF;
+                     `JE:      e_Cnd_o = ZF;
+                    `JNE:      e_Cnd_o = !ZF;
+                    `JGE:      e_Cnd_o = ZF || (SF && OF) || !SF;
+                     `JG:      e_Cnd_o = (SF && OF) || !SF;
+                     default:  e_Cnd_o = 1'B1;
                 endcase
                     
-                if(e_Cnd == 1'B1)
-                    e_dstE = E_dstE;
+                if(e_Cnd_o == 1'B1)
+                    e_dstE_o = E_dstE_i;
                 else
-                    e_dstE = `NREG;
+                    e_dstE_o = `NREG;
             end
         else
             begin
-                e_dstE = E_dstE;
+                e_dstE_o = E_dstE_i;
             end
     end
 endmodule

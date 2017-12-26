@@ -1,93 +1,93 @@
 `include "define.v"
 
 module alu_args(
-    input wire [`ICODE_BUS] E_icode,
-    input wire [`IFUN_BUS] E_ifun,
-    input wire [`DATA_BUS] E_valC,
-    input wire [`DATA_BUS] E_valA,
-    input wire [`DATA_BUS] E_valB,
+    input wire [`ICODE_BUS] E_icode_i,
+    input wire [`IFUN_BUS] E_ifun_i,
+    input wire [`DATA_BUS] E_valC_i,
+    input wire [`DATA_BUS] E_valA_i,
+    input wire [`DATA_BUS] E_valB_i,
     
-    output reg [`DATA_BUS] aluA,
-    output reg [`DATA_BUS] aluB,
-    output reg [`IFUN_BUS] fun
+    output reg [`DATA_BUS] aluA_o,
+    output reg [`DATA_BUS] aluB_o,
+    output reg [`IFUN_BUS] fun_o
     );
     
     always @(*)
         begin
-            case(E_icode)
+            case(E_icode_i)
                 `CXX:
                     begin
-                        aluA = E_valA;
-                        aluB = `DATA_WIDTH'H0;
-                        fun = `ADDQ;
+                        aluA_o = E_valA_i;
+                        aluB_o = `DATA_WIDTH'H0;
+                        fun_o = `ADDQ;
                     end
                 `IXX:
                     begin
-                        aluB = E_valC;
-                        if(E_ifun == `IRMOVQ)
+                        aluB_o = E_valC_i;
+                        if(E_ifun_i == `IRMOVQ)
                         begin
-                            aluA = `DATA_WIDTH'H0;
-                            fun = `ADDQ;
+                            aluA_o = `DATA_WIDTH'H0;
+                            fun_o = `ADDQ;
                         end
                         else
                         begin
-                            aluA = E_valB;
-                            fun = E_ifun - 1;
+                            aluA_o = E_valB_i;
+                            fun_o = E_ifun_i - 1;
                         end
                     end
                 `OPQ:
                     begin
-                        aluA = E_valB;
-                        aluB = E_valA;
-                        fun = E_ifun;
+                        aluA_o = E_valB_i;
+                        aluB_o = E_valA_i;
+                        fun_o = E_ifun_i;
                     end
                 `RMMOVQ:
                     begin
-                        aluA = E_valB;
-                        aluB = E_valC;
-                        fun = `ADDQ;
+                        aluA_o = E_valB_i;
+                        aluB_o = E_valC_i;
+                        fun_o = `ADDQ;
                     end
                 `MRMOVQ:
                     begin
-                        aluA = E_valA;
-                        aluB = E_valC;
-                        fun = `ADDQ;
+                        aluA_o = E_valA_i;
+                        aluB_o = E_valC_i;
+                        fun_o = `ADDQ;
                     end
                 `JXX:
                     begin
-                        aluA = `DATA_WIDTH'H0;
-                        aluB = `DATA_WIDTH'H0;
-                        fun = `NOPQ;
+                        aluA_o = `DATA_WIDTH'H0;
+                        aluB_o = `DATA_WIDTH'H0;
+                        fun_o = `NOPQ;
                     end
                 `CALL:
                     begin   
-                        aluA = E_valB;
-                        aluB = -`DATA_WIDTH'H8;
-                        fun = `ADDQ;
+                        aluA_o = E_valB_i;
+                        aluB_o = -`DATA_WIDTH'H8;
+                        fun_o = `ADDQ;
                     end
                 `RET:
                     begin
-                        aluA = E_valB;
-                        aluB = `DATA_WIDTH'H8;
-                        fun = `ADDQ;
+                        aluA_o = E_valB_i;
+                        aluB_o = `DATA_WIDTH'H8;
+                        fun_o = `ADDQ;
                     end
                 `PUSHQ:
                     begin   
-                        aluA = E_valB;
-                        aluB = -`DATA_WIDTH'H8;
-                        fun = `ADDQ;
+                        aluA_o = E_valB_i;
+                        aluB_o = -`DATA_WIDTH'H8;
+                        fun_o = `ADDQ;
                     end
                 `POPQ:
                     begin
-                        aluA = E_valB;
-                        aluB = `DATA_WIDTH'H8;
-                        fun = `ADDQ;
+                        aluA_o = E_valB_i;
+                        aluB_o = `DATA_WIDTH'H8;
+                        fun_o = `ADDQ;
                     end
                 default:
                     begin
-                        aluA = `DATA_WIDTH'H0;
-                        aluB = `DATA_WIDTH'H0;
-                        fun = `NOPQ;
+                        aluA_o = `DATA_WIDTH'H0;
+                        aluB_o = `DATA_WIDTH'H0;
+                        fun_o = `NOPQ;
                     end
             endcase
         end

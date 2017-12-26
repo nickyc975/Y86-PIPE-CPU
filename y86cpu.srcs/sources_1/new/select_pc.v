@@ -1,29 +1,34 @@
 `include "define.v"
 
 module select_pc(
-    input wire rst,
-    input wire M_Cnd,
-    input wire [`ICODE_BUS] M_icode,
-    input wire [`ICODE_BUS] W_icode,
-    input wire [`ADDR_BUS] M_valA,
-    input wire [`ADDR_BUS] W_valM,
-    input wire [`ADDR_BUS] F_predPC,
-    output reg [`ADDR_BUS] f_pc
+    input wire M_Cnd_i,
+    input wire [`ICODE_BUS] M_icode_i,
+    input wire [`ICODE_BUS] W_icode_i,
+    input wire [`ADDR_BUS] M_valA_i,
+    input wire [`ADDR_BUS] W_valM_i,
+    input wire [`ADDR_BUS] F_predPC_i,
+    
+    output reg [`ADDR_BUS] f_pc_o
     );
+    
+    initial 
+        begin
+            f_pc_o = `ADDR_WIDTH'H0;
+        end
     
     always @(*)
         begin
-            if(M_icode == `JXX && M_Cnd)
+            if(M_icode_i == `JXX && M_Cnd_i)
             begin
-                f_pc = M_valA;
+                f_pc_o = M_valA_i;
             end
-            else if(W_icode == `RET)
+            else if(W_icode_i == `RET)
             begin
-                f_pc = W_valM;
+                f_pc_o = W_valM_i;
             end
             else
             begin
-                f_pc = F_predPC;
+                f_pc_o = F_predPC_i;
             end
         end
 endmodule

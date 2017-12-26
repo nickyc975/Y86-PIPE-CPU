@@ -1,68 +1,68 @@
 `include "define.v"
 
 module decode(
-    input wire [`ICODE_BUS] icode,
-    input wire [`ADDR_BUS] valP,
-    input wire [`REG_ADDR_BUS] d_srcA,
-    input wire [`REG_ADDR_BUS] d_srcB,
-    input wire [`DATA_BUS] d_rvalA,
-    input wire [`DATA_BUS] d_rvalB,
-    input wire [`REG_ADDR_BUS] e_dstE,
-    input wire [`DATA_BUS] e_valE,
-    input wire [`REG_ADDR_BUS] M_dstE,
-    input wire [`DATA_BUS] M_valE,
-    input wire [`REG_ADDR_BUS] M_dstM,
-    input wire [`DATA_BUS] m_valM,
-    input wire [`REG_ADDR_BUS] W_dstE,
-    input wire [`DATA_BUS] W_valE,
-    input wire [`REG_ADDR_BUS] W_dstM,
-    input wire [`DATA_BUS] W_valM,
+    input wire [`ICODE_BUS]    D_icode_i,
+    input wire [`ADDR_BUS]     D_valP_i,
+    input wire [`REG_ADDR_BUS] D_srcA_i,
+    input wire [`REG_ADDR_BUS] D_srcB_i,
+    input wire [`DATA_BUS]     r_valA_i,
+    input wire [`DATA_BUS]     r_valB_i,
+    input wire [`REG_ADDR_BUS] e_dstE_i,
+    input wire [`DATA_BUS]     e_valE_i,
+    input wire [`REG_ADDR_BUS] M_dstE_i,
+    input wire [`DATA_BUS]     M_valE_i,
+    input wire [`REG_ADDR_BUS] M_dstM_i,
+    input wire [`DATA_BUS]     m_valM_i,
+    input wire [`REG_ADDR_BUS] W_dstE_i,
+    input wire [`DATA_BUS]     W_valE_i,
+    input wire [`REG_ADDR_BUS] W_dstM_i,
+    input wire [`DATA_BUS]     W_valM_i,
     
-    output reg [`DATA_BUS] valA,
-    output reg [`DATA_BUS] valB
+    output reg [`DATA_BUS] d_valA_o,
+    output reg [`DATA_BUS] d_valB_o
     );
     
     always @(*)
     begin
-        case(icode)
+        case(D_icode_i)
             `CALL:
                 begin
-                    valA = valP;
-                    valB = d_rvalB;
+                    d_valA_o = D_valP_i;
+                    d_valB_o = r_valB_i;
                 end
             `JXX:
                 begin
-                     valA = valP;
-                     valB = d_rvalB;
+                     d_valA_o = D_valP_i;
+                     d_valB_o = r_valB_i;
                 end
             `HALT:
                 begin
-                    valA = `DATA_WIDTH'H0;
-                    valB = `DATA_WIDTH'H0;
+                    d_valA_o = `DATA_WIDTH'H0;
+                    d_valB_o = `DATA_WIDTH'H0;
                 end
             `NOP:
                 begin
-                    valA = `DATA_WIDTH'H0;
-                    valB = `DATA_WIDTH'H0;
+                    d_valA_o = `DATA_WIDTH'H0;
+                    d_valB_o = `DATA_WIDTH'H0;
                 end
             default:
                 begin
-                    case(d_srcA)
-                        e_dstE:     valA = e_valE;
-                        M_dstM:     valA = m_valM;
-                        M_dstE:     valA = M_valE;
-                        W_dstE:     valA = W_valE;
-                        W_dstM:     valA = W_valM;
-                        default:    valA = d_rvalA;
+                    case(D_srcA_i)
+                        e_dstE_i:   d_valA_o = e_valE_i;
+                        M_dstM_i:   d_valA_o = m_valM_i;
+                        M_dstE_i:   d_valA_o = M_valE_i;
+                        W_dstE_i:   d_valA_o = W_valE_i;
+                        W_dstM_i:   d_valA_o = W_valM_i;
+                        default:    d_valA_o = r_valA_i;
                     endcase
                                 
-                    case(d_srcB)
-                        e_dstE:     valB = e_valE;
-                        M_dstM:     valB = m_valM;
-                        M_dstE:     valB = M_valE;
-                        W_dstE:     valB = W_valE;
-                        W_dstM:     valB = W_valM;
-                        default:    valB = d_rvalB;
+                    case(D_srcB_i)
+                        e_dstE_i:   d_valB_o = e_valE_i;
+                        M_dstM_i:   d_valB_o = m_valM_i;
+                        M_dstE_i:   d_valB_o = M_valE_i;
+                        W_dstE_i:   d_valB_o = W_valE_i;
+                        W_dstM_i:   d_valB_o = W_valM_i;
+                        default:    d_valB_o = r_valB_i;
                     endcase
                 end
         endcase

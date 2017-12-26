@@ -2,13 +2,17 @@
 
 module i_mem(
     input wire [`ADDR_BUS] addr,
-    output reg [`INST_BUS] inst
-    // output reg [`STAT_BUS] stat
+    output reg [`INST_BUS] inst,
+    output reg error
     );
     
     reg [`BYTE0]mem[0:`MEM_SIZE];
     
-    initial $readmemh("F:/Projects/Verilog/y86cpu/insts.data", mem);
+    initial
+        begin
+            error = 1'B0;
+            $readmemh("F:/Projects/Verilog/y86cpu/insts.data", mem);
+        end
     
     always @(*)
         begin
@@ -16,7 +20,7 @@ module i_mem(
             begin
                 inst = {mem[addr], mem[addr + 1], mem[addr + 2], mem[addr + 3], mem[addr + 4], mem[addr + 5],
                          mem[addr + 6], mem[addr + 7], mem[addr + 8], mem[addr + 9]};
-                // stat = `AOK;
+                error = 1'B0;
             end
             else if(addr <= `MEM_SIZE)
             begin
@@ -67,13 +71,11 @@ module i_mem(
                                      `BYTE_SIZE'H0, `BYTE_SIZE'H0, `BYTE_SIZE'H0, `BYTE_SIZE'H0};
                         end
                 endcase
-                // stat = `AOK;
+                error = 1'B0;
             end
             else
             begin
-                inst = {mem[0], mem[1], mem[2], mem[3], mem[4], mem[5],
-                         mem[6], mem[7], mem[8], mem[9]};
-                // stat = `SMEM;
+                error = 1'B1;
             end
         end
 endmodule

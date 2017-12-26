@@ -3,72 +3,72 @@
 module registers(
     input wire clk,
     input wire rst,
-    input wire [`REG_ADDR_BUS]dstW,
-    input wire [`REG_ADDR_BUS]dstE,
-    input wire [`DATA_BUS]valW,
-    input wire [`DATA_BUS]valE,
-    input wire [`REG_ADDR_BUS]srcA,
-    input wire [`REG_ADDR_BUS]srcB,
+    input wire [`REG_ADDR_BUS]W_dstM_i,
+    input wire [`REG_ADDR_BUS]W_dstE_i,
+    input wire [`DATA_BUS]W_valM_i,
+    input wire [`DATA_BUS]W_valE_i,
+    input wire [`REG_ADDR_BUS]D_rA_i,
+    input wire [`REG_ADDR_BUS]D_rB_i,
     
-    output reg [`DATA_BUS]valA,
-    output reg [`DATA_BUS]valB
+    output reg [`DATA_BUS]r_valA_o,
+    output reg [`DATA_BUS]r_valB_o
     );
     
     reg [`DATA_BUS]registers[0:`NREG];
     
     always @(posedge clk)
         begin
-            if(rst == ~`RST_EN && dstW < `NREG)
+            if(rst == ~`RST_EN && W_dstM_i < `NREG)
             begin
-                registers[dstW] <= valW;
+                registers[W_dstM_i] <= W_valM_i;
             end
         end
         
     always @(posedge clk)
         begin
-            if(rst == ~`RST_EN && dstE < `NREG)
+            if(rst == ~`RST_EN && W_dstE_i < `NREG)
             begin
-                registers[dstE] <= valE;
+                registers[W_dstE_i] <= W_valE_i;
             end
         end
         
     always @(*)
         begin
-            if(rst == `RST_EN || srcA >= `NREG)
+            if(rst == `RST_EN || D_rA_i >= `NREG)
             begin
-                valA = `DATA_WIDTH'H0;
+                r_valA_o = `DATA_WIDTH'H0;
             end
-            else if(srcA == dstW)
+            else if(D_rA_i == W_dstM_i)
             begin
-                valA = valW;
+                r_valA_o = W_valM_i;
             end
-            else if(srcA == dstE)
+            else if(D_rA_i == W_dstE_i)
             begin
-                 valA = valE;
+                 r_valA_o = W_valE_i;
             end
             else
             begin
-                valA = registers[srcA];
+                r_valA_o = registers[D_rA_i];
             end
         end
         
     always @(*)
         begin
-            if(rst == `RST_EN || srcB >= `NREG)
+            if(rst == `RST_EN || D_rB_i >= `NREG)
             begin
-                valB = `DATA_WIDTH'H0;
+                r_valB_o = `DATA_WIDTH'H0;
             end
-            else if(srcB == dstW)
+            else if(D_rB_i == W_dstM_i)
             begin
-                valB = valW;
+                r_valB_o = W_valM_i;
             end
-            else if(srcB == dstE)
+            else if(D_rB_i == W_dstE_i)
             begin
-                valB = valE;
+                r_valB_o = W_valE_i;
             end
             else
             begin
-                valB = registers[srcB];
+                r_valB_o = registers[D_rB_i];
             end
         end
 endmodule

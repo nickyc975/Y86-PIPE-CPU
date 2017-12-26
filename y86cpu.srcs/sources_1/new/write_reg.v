@@ -3,40 +3,40 @@
 module write_reg(
     input wire clk,
     input wire rst,
-    input wire [`STAT_BUS] m_stat,
-    input wire [`ICODE_BUS] M_icode,
-    input wire [`DATA_BUS] M_valE,
-    input wire [`DATA_BUS] m_valM,
-    input wire [`REG_ADDR_BUS] M_dstE,
-    input wire [`REG_ADDR_BUS] M_dstM,
+    input wire [`STAT_BUS] m_stat_i,
+    input wire [`ICODE_BUS] M_icode_i,
+    input wire [`DATA_BUS] M_valE_i,
+    input wire [`DATA_BUS] m_valM_i,
+    input wire [`REG_ADDR_BUS] M_dstE_i,
+    input wire [`REG_ADDR_BUS] M_dstM_i,
     
-    output reg [`STAT_BUS] W_stat,
-    output reg [`ICODE_BUS] W_icode,
-    output reg [`DATA_BUS] W_valE,
-    output reg [`DATA_BUS] W_valM,
-    output reg [`REG_ADDR_BUS] W_dstE,
-    output reg [`REG_ADDR_BUS] W_dstM
+    output reg [`STAT_BUS] W_stat_o,
+    output reg [`ICODE_BUS] W_icode_o,
+    output reg [`DATA_BUS] W_valE_o,
+    output reg [`DATA_BUS] W_valM_o,
+    output reg [`REG_ADDR_BUS] W_dstE_o,
+    output reg [`REG_ADDR_BUS] W_dstM_o
     );
     
     always @(posedge clk)
         begin
             if(rst == `RST_EN)
             begin
-                W_stat <= `AOK;
-                W_icode <= `NOP;
-                W_valE <= `DATA_WIDTH'H0;
-                W_valM <= `DATA_WIDTH'H0;
-                W_dstE <= `NREG;
-                W_dstM <= `NREG;
+                W_stat_o <= `AOK;
+                W_icode_o <= `NOP;
+                W_valE_o <= `DATA_WIDTH'H0;
+                W_valM_o <= `DATA_WIDTH'H0;
+                W_dstE_o <= `NREG;
+                W_dstM_o <= `NREG;
             end
             else
             begin
-                W_stat <= m_stat;
-                W_icode <= M_icode;
-                W_valE <= M_valE;
-                W_valM <= m_valM;
-                W_dstE <= M_dstE;
-                W_dstM <= M_dstM;
+                W_stat_o <= m_stat_i;
+                W_icode_o <= M_icode_i;
+                W_valE_o <= M_valE_i;
+                W_valM_o <= m_valM_i;
+                W_dstE_o <= M_dstE_i;
+                W_dstM_o <= M_dstM_i;
             end
         end
     

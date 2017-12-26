@@ -1,9 +1,9 @@
 `include "define.v"
 
 module mem(
-    input wire [`DATA_BUS] M_valE,
-    input wire [`DATA_BUS] M_valA,
-    input wire [`ICODE_BUS] M_icode,
+    input wire [`DATA_BUS] M_valE_i,
+    input wire [`DATA_BUS] M_valA_i,
+    input wire [`ICODE_BUS] M_icode_i,
     
     output reg [`ADDR_BUS] addr,
     output reg write
@@ -11,24 +11,24 @@ module mem(
     
     always @(*)
         begin
-            if(M_icode == `RMMOVQ)
+            if(M_icode_i == `RMMOVQ)
                 begin
-                    addr = M_valE;
+                    addr = M_valE_i;
                     write = 1'B1;
                 end
-            else if(M_icode == `MRMOVQ)
+            else if(M_icode_i == `MRMOVQ)
                 begin
-                    addr = M_valE;
+                    addr = M_valE_i;
                     write = 1'B0;
                 end
-            else if(M_icode == `CALL || M_icode == `PUSHQ)
+            else if(M_icode_i == `CALL || M_icode_i == `PUSHQ)
                 begin
-                    addr = M_valA;
+                    addr = M_valA_i;
                     write = 1'B1;
                 end
-            else if(M_icode == `RET || M_icode == `POPQ)
+            else if(M_icode_i == `RET || M_icode_i == `POPQ)
                 begin
-                    addr = M_valA;
+                    addr = M_valA_i;
                     write = 1'B0;
                 end
             else
