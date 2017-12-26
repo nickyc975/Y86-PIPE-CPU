@@ -1,107 +1,122 @@
+`include "define.v"
+
 module y86cpu(
       input wire rst_i,
       input wire clk_i,
-      input wire [79:0] inst_i,
-      input wire [63:0] data_i,
+      input wire [`INST_BUS] inst_i,
+      input wire [`DATA_BUS] data_i,
       input wire i_mem_error_i,
       input wire d_mem_error_i,
 
       output wire write_o,
-      output wire [63:0] pc_o,
-      output wire [63:0] addr_o,
-      output wire [63:0] data_o
+      output wire [`ADDR_BUS] pc_o,
+      output wire [`ADDR_BUS] addr_o,
+      output wire [`DATA_BUS] data_o
       );
   
   
 
       wire clk;
       wire rst;
-      wire [79:0] inst;
-      wire [63:0] data;
+      wire [`INST_BUS] inst;
+      wire [`DATA_BUS] data;
       wire i_mem_error;
       wire d_mem_error;
 
-      wire [63:0] F_predPC;
+      // fetch_reg
+      wire [`ADDR_BUS]      F_predPC;
 
-      wire [63:0] f_pc;
+      // select_pc
+      wire [`ADDR_BUS]      f_pc;
       
-      wire [3:0]  f_icode;
-      wire [3:0]  f_ifun;
-      wire [3:0]  f_rA;
-      wire [3:0]  f_rB;
-      wire [63:0] f_valC;
-      wire [63:0] f_valP;
-      wire [3:0]  f_dstE;
-      wire [3:0]  f_dstM;
-      wire [63:0] f_predPC;
-      wire [2:0]  f_stat;
+      // fetch
+      wire [`ICODE_BUS]     f_icode;
+      wire [`IFUN_BUS]      f_ifun;
+      wire [`REG_ADDR_BUS]  f_rA;
+      wire [`REG_ADDR_BUS]  f_rB;
+      wire [`DATA_BUS]      f_valC;
+      wire [`ADDR_BUS]      f_valP;
+      wire [`REG_ADDR_BUS]  f_dstE;
+      wire [`REG_ADDR_BUS]  f_dstM;
+      wire [`ADDR_BUS]      f_predPC;
+      wire [`STAT_BUS]      f_stat;
       
-      wire [3:0]  D_icode;
-      wire [3:0]  D_ifun;
-      wire [3:0]  D_rA;
-      wire [3:0]  D_rB;
-      wire [63:0] D_valC;
-      wire [63:0] D_valP;
-      wire [3:0]  D_dstE;
-      wire [3:0]  D_dstM;
-      wire [2:0]  D_stat;
+      // decode_reg
+      wire [`ICODE_BUS]     D_icode;
+      wire [`IFUN_BUS]      D_ifun;
+      wire [`REG_ADDR_BUS]  D_rA;
+      wire [`REG_ADDR_BUS]  D_rB;
+      wire [`DATA_BUS]      D_valC;
+      wire [`ADDR_BUS]      D_valP;
+      wire [`REG_ADDR_BUS]  D_dstE;
+      wire [`REG_ADDR_BUS]  D_dstM;
+      wire [`STAT_BUS]      D_stat;
 
-      wire [63:0] d_valA;
-      wire [63:0] d_valB;
+      // decode
+      wire [`DATA_BUS]      d_valA;
+      wire [`DATA_BUS]      d_valB;
 
-      wire [2:0]  E_stat;
-      wire [3:0]  E_icode;
-      wire [3:0]  E_ifun;
-      wire [63:0] E_valC;
-      wire [63:0] E_valA;
-      wire [63:0] E_valB;
-      wire [3:0]  E_dstE;
-      wire [3:0]  E_dstM;
+      // execute_reg
+      wire [`STAT_BUS]      E_stat;
+      wire [`ICODE_BUS]     E_icode;
+      wire [`IFUN_BUS]      E_ifun;
+      wire [`DATA_BUS]      E_valC;
+      wire [`DATA_BUS]      E_valA;
+      wire [`DATA_BUS]      E_valB;
+      wire [`REG_ADDR_BUS]  E_dstE;
+      wire [`REG_ADDR_BUS]  E_dstM;
 
-      wire [63:0] aluA;
-      wire [63:0] aluB;
-      wire [3:0]  fun;
+      // alu_args
+      wire [`DATA_BUS]      aluA;
+      wire [`DATA_BUS]      aluB;
+      wire [`IFUN_BUS]      fun;
 
-      wire [63:0] e_valE;
+      // alu
+      wire [`DATA_BUS]      e_valE;
       wire OF;
       wire SF;
       wire ZF;
 
+      // set_cond
       wire e_Cnd;
-      wire [3:0]  e_dstE;
+      wire [`REG_ADDR_BUS]  e_dstE;
 
+      // mem_reg
       wire M_Cnd;
-      wire [2:0]  M_stat;
-      wire [3:0]  M_icode;
-      wire [3:0]  M_dstE;
-      wire [63:0] M_valA;
-      wire [63:0] M_valE;
-      wire [3:0]  M_dstM;
+      wire [`STAT_BUS]      M_stat;
+      wire [`ICODE_BUS]     M_icode;
+      wire [`REG_ADDR_BUS]  M_dstE;
+      wire [`DATA_BUS]      M_valA;
+      wire [`DATA_BUS]      M_valE;
+      wire [`REG_ADDR_BUS]  M_dstM;
 
-      wire [63:0] addr;
+      // mem
+      wire [`ADDR_BUS]      addr;
       wire write;
       
-      wire [63:0] r_valA;
-      wire [63:0] r_valB;
+      // registers
+      wire [`DATA_BUS]      r_valA;
+      wire [`DATA_BUS]      r_valB;
       
-      wire [2:0]  W_stat;
-      wire [3:0]  W_icode;
-      wire [3:0]  W_dstE;
-      wire [3:0]  W_dstM;
-      wire [63:0] W_valE;
-      wire [63:0] W_valM;
+      // write_reg
+      wire [`STAT_BUS]      W_stat;
+      wire [`ICODE_BUS]     W_icode;
+      wire [`REG_ADDR_BUS]  W_dstE;
+      wire [`REG_ADDR_BUS]  W_dstM;
+      wire [`DATA_BUS]      W_valE;
+      wire [`DATA_BUS]      W_valM;
 
       assign clk = clk_i;
       assign rst = rst_i;
-      assign inst = inst_i[79:0];
-      assign data = data_i[63:0];
+      assign inst = inst_i[`INST_BUS];
+      assign data = data_i[`DATA_BUS];
       assign i_mem_error = i_mem_error_i;
       assign d_mem_error = d_mem_error_i;
 
       assign write_o = write;
-      assign addr_o[63:0] = addr;
-      assign data_o[63:0] = M_valA;
-      assign pc_o[63:0] = f_pc;
+      assign addr_o[`ADDR_BUS] = addr;
+      assign data_o[`DATA_BUS] = M_valA;
+      assign pc_o[`ADDR_BUS] = f_pc;
 
       fetch_reg y86_fetch_reg
       (
