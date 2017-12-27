@@ -23,7 +23,7 @@ module mem(
                 end
             else if(M_icode_i == `CALL || M_icode_i == `PUSHQ)
                 begin
-                    addr = M_valA_i;
+                    addr = M_valE_i;
                     write = `TRUE;
                 end
             else if(M_icode_i == `RET || M_icode_i == `POPQ)

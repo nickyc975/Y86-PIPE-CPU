@@ -62,8 +62,8 @@ module alu_args(
                 `CALL:
                     begin   
                         aluA_o = E_valB_i;
-                        aluB_o = -`DATA_WIDTH'H8;
-                        fun_o = `ADDQ;
+                        aluB_o = `DATA_WIDTH'H8;
+                        fun_o = `SUBQ;
                     end
                 `RET:
                     begin
@@ -74,8 +74,8 @@ module alu_args(
                 `PUSHQ:
                     begin   
                         aluA_o = E_valB_i;
-                        aluB_o = -`DATA_WIDTH'H8;
-                        fun_o = `ADDQ;
+                        aluB_o = `DATA_WIDTH'H8;
+                        fun_o = `SUBQ;
                     end
                 `POPQ:
                     begin

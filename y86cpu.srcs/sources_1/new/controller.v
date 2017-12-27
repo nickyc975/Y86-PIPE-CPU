@@ -36,6 +36,7 @@ module controller(
             if(m_stat_i != `SAOK || W_stat_i != `SAOK)
                 begin
                     F_stall_o = `TRUE;
+                    D_stall_o = `TRUE;
                     set_cc_o = `FALSE;
                     M_bubble_o = `TRUE;
                     if(W_stat_i != `SAOK)
@@ -47,7 +48,6 @@ module controller(
                 begin
                     F_stall_o = `TRUE;
                     D_bubble_o = `TRUE;
-                    E_bubble_o = `TRUE;
                 end
             else if((E_icode_i == `MRMOVQ || E_icode_i == `POPQ) &&
                     E_dstM_i != `NREG && (D_rA_i == E_dstM_i || D_rB_i == E_dstM_i))
@@ -69,6 +69,7 @@ module controller(
             else if(D_icode_i == `RET)
                 begin
                     F_stall_o = `TRUE;
+                    D_bubble_o = `TRUE;
                 end
             else
                 begin

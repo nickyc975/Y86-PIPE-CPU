@@ -35,10 +35,14 @@ module fetch(
             case(f_icode_o)
                 `HALT:
                     begin
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H1;
+                        f_predPC_o = f_valP_o;
                         f_stat_o = `SHLT;
                     end
                 `NOP:
                     begin
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H1;
+                        f_predPC_o = f_valP_o;
                         f_stat_o = `SAOK;
                     end
                 `CXX:
@@ -107,7 +111,7 @@ module fetch(
                                     inst_i[`BYTE5], inst_i[`BYTE6], inst_i[`BYTE7], inst_i[`BYTE8]};
                         f_valP_o = f_pc_i + `ADDR_WIDTH'H9;
                         f_predPC_o = f_valC_o;
-                        f_dstM_o = `RSP;
+                        f_dstE_o = `RSP;
                         f_stat_o = `SAOK;
                     end
                 `RET:
@@ -138,7 +142,9 @@ module fetch(
                         f_stat_o = `SAOK;
                     end
                 default:
-                    begin
+                    begin   
+                        f_valP_o = f_pc_i + `ADDR_WIDTH'H1;
+                        f_predPC_o = f_valP_o;
                         f_stat_o = `SINS;
                     end
             endcase

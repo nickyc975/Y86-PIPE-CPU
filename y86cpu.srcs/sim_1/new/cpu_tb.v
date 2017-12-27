@@ -7,14 +7,14 @@ module cpu_tb;
     initial
         begin
             clk <= 1'B0;
-            forever #10 clk <= ~clk;
+            forever #5 clk <= ~clk;
         end
         
     initial
         begin
             rst <= 1'B1;  
             #5 rst <= 1'B0;  
-            #1000 $stop;  
+            #1000 $stop;
         end
     sopc test(.clk(clk), .rst(rst));
 endmodule

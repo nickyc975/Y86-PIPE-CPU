@@ -28,12 +28,26 @@ module decode(
             `CALL:
                 begin
                     d_valA_o = D_valP_i;
-                    d_valB_o = r_valB_i;
+                    case(D_srcB_i)
+                        e_dstE_i:   d_valB_o = e_valE_i;
+                        M_dstM_i:   d_valB_o = m_valM_i;
+                        M_dstE_i:   d_valB_o = M_valE_i;
+                        W_dstE_i:   d_valB_o = W_valE_i;
+                        W_dstM_i:   d_valB_o = W_valM_i;
+                        default:    d_valB_o = r_valB_i;
+                    endcase
                 end
             `JXX:
                 begin
                      d_valA_o = D_valP_i;
-                     d_valB_o = r_valB_i;
+                     case(D_srcB_i)
+                        e_dstE_i:   d_valB_o = e_valE_i;
+                        M_dstM_i:   d_valB_o = m_valM_i;
+                        M_dstE_i:   d_valB_o = M_valE_i;
+                        W_dstE_i:   d_valB_o = W_valE_i;
+                        W_dstM_i:   d_valB_o = W_valM_i;
+                        default:    d_valB_o = r_valB_i;
+                    endcase
                 end
             `HALT:
                 begin
