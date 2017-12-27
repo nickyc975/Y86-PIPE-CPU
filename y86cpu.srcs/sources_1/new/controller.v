@@ -19,4 +19,55 @@ module controller(
     output reg M_bubble_o,
     output reg W_stall_o
     );
+
+    always @(*)
+        begin
+            if(m_stat_i != `SAOK || W_stat_i != `SAOK)
+                begin
+                    F_stall_o = 1'B1;
+                    set_cc_o = 1'B0;
+                    M_bubble_o = 1'B1;
+                    if(W_stat_i != `SAOK)
+                        begin
+                            W_stall_o = 1'B1;
+                        end
+                end
+            else if(M_icode_i == `RET)
+                begin
+                    F_stall_o = 1'B1;
+                    D_bubble_o = 1'B1;
+                    E_bubble_o = 1'B1;
+                end
+            else if((E_icode_i == `MRMOVQ || E_icode_i == `POPQ) && (D_rA_i == E_dstM_i || D_rB_i == E_dstM_i))
+                begin
+                    F_stall_o = 1'B1;
+                    D_stall_o = 1'B1;
+                    E_bubble_o = 1'B1;
+                end
+            else if(E_icode_i == `JXX && e_Cnd_i == 1'B0)
+                begin
+                    D_bubble_o = 1'B1;
+                    E_bubble_o = 1'B1;
+                end
+            else if(E_icode_i == `RET)
+                begin
+                    F_stall_o = 1'B1;
+                    D_bubble_o = 1'B1;
+                end
+            else if(D_icode_i == `RET)
+                begin
+                    F_stall_o = 1'B1;
+                end
+            else
+                begin
+                    F_stall_o = 1'B0;
+                    D_bubble_o = 1'B0;
+                    D_stall_o = 1'B0;
+                    E_bubble_o = 1'B0;
+                    set_cc_o = 1'B1;
+                    M_bubble_o = 1'B0;
+                    W_stall_o = 1'B0;
+                end
+        end
+
 endmodule

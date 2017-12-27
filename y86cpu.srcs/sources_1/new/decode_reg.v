@@ -62,7 +62,7 @@ module decode_reg(
                 D_valP_o <= `ADDR_WIDTH'H0;
                 D_dstE_o <= `NREG;
                 D_dstM_o <= `NREG;
-                D_stat_o <= `SBUB;
+                D_stat_o <= `SAOK;
             end
         else
             begin

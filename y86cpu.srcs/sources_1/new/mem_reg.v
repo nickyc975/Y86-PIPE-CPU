@@ -36,7 +36,7 @@ module mem_reg(
             else if(M_bubble_i == 1'B1)
             begin
                 M_Cnd_o  <= e_Cnd_i;
-                M_stat_o <= `SBUB;
+                M_stat_o <= `SAOK;
                 M_icode_o <= `NOP;
                 M_valE_o <= `DATA_WIDTH'H0;
                 M_valA_o <= `DATA_WIDTH'H0;

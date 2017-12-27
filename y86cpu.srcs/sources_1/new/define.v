@@ -6,12 +6,10 @@
 `define FALSE       1'B1
 `define CHIP_EN     1'B1
 `define INS_VALID   1'B1
-`define SAOK        3'B001
-`define SBUB        3'B010
-`define SSTL        3'B100
-`define SINS        3'B110
-`define SADR        3'B101
-`define SHLT        3'B011
+`define SAOK        3'B000
+`define SINS        3'B001
+`define SADR        3'B010
+`define SHLT        3'B100
 
 // Instruction codes
 `define HALT    4'H0

@@ -40,7 +40,7 @@ module execute_reg(
             end
             else if(E_bubble_i == 1'B1)
             begin
-                E_stat_o <= `SBUB;
+                E_stat_o <= `SAOK;
                 E_icode_o <= `NOP;
                 E_ifun_o <= `IFUN_WIDTH'H0;
                 E_valA_o <= `DATA_WIDTH'H0;
