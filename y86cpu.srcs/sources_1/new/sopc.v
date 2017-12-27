@@ -1,13 +1,15 @@
+`include "define.v"
+
 module sopc(
     input wire clk,
     input wire rst
     );
     
-    wire [63:0]addr_bus;
-    wire [63:0]data_i_bus;
-    wire [63:0]data_o_bus;
-    wire [79:0]inst_bus;
-    wire [63:0]pc;
+    wire [`ADDR_BUS] addr_bus;
+    wire [`DATA_BUS] data_i_bus;
+    wire [`DATA_BUS] data_o_bus;
+    wire [`INST_BUS] inst_bus;
+    wire [`ADDR_BUS] pc;
     wire write;
     wire i_mem_error;
     wire d_mem_error;
