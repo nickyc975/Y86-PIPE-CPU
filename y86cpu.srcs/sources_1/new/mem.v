@@ -14,26 +14,27 @@ module mem(
             if(M_icode_i == `RMMOVQ)
                 begin
                     addr = M_valE_i;
-                    write = 1'B1;
+                    write = `TRUE;
                 end
             else if(M_icode_i == `MRMOVQ)
                 begin
                     addr = M_valE_i;
-                    write = 1'B0;
+                    write = `FALSE;
                 end
             else if(M_icode_i == `CALL || M_icode_i == `PUSHQ)
                 begin
                     addr = M_valA_i;
-                    write = 1'B1;
+                    write = `TRUE;
                 end
             else if(M_icode_i == `RET || M_icode_i == `POPQ)
                 begin
                     addr = M_valA_i;
-                    write = 1'B0;
+                    write = `FALSE;
                 end
             else
                 begin
-                    write = 1'B0;
+                    addr = `ADDR_ZERO;
+                    write = `FALSE;
                 end
         end
     

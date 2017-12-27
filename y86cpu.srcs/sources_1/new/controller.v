@@ -20,53 +20,65 @@ module controller(
     output reg W_stall_o
     );
 
+    initial
+        begin
+            F_stall_o = `FALSE;
+            D_bubble_o = `FALSE;
+            D_stall_o = `FALSE;
+            E_bubble_o = `FALSE;
+            set_cc_o = `TRUE;
+            M_bubble_o = `FALSE;
+            W_stall_o = `FALSE;
+        end
+
     always @(*)
         begin
             if(m_stat_i != `SAOK || W_stat_i != `SAOK)
                 begin
-                    F_stall_o = 1'B1;
-                    set_cc_o = 1'B0;
-                    M_bubble_o = 1'B1;
+                    F_stall_o = `TRUE;
+                    set_cc_o = `FALSE;
+                    M_bubble_o = `TRUE;
                     if(W_stat_i != `SAOK)
                         begin
-                            W_stall_o = 1'B1;
+                            W_stall_o = `TRUE;
                         end
                 end
             else if(M_icode_i == `RET)
                 begin
-                    F_stall_o = 1'B1;
-                    D_bubble_o = 1'B1;
-                    E_bubble_o = 1'B1;
+                    F_stall_o = `TRUE;
+                    D_bubble_o = `TRUE;
+                    E_bubble_o = `TRUE;
                 end
-            else if((E_icode_i == `MRMOVQ || E_icode_i == `POPQ) && (D_rA_i == E_dstM_i || D_rB_i == E_dstM_i))
+            else if((E_icode_i == `MRMOVQ || E_icode_i == `POPQ) &&
+                    E_dstM_i != `NREG && (D_rA_i == E_dstM_i || D_rB_i == E_dstM_i))
                 begin
-                    F_stall_o = 1'B1;
-                    D_stall_o = 1'B1;
-                    E_bubble_o = 1'B1;
+                    F_stall_o = `TRUE;
+                    D_stall_o = `TRUE;
+                    E_bubble_o = `TRUE;
                 end
-            else if(E_icode_i == `JXX && e_Cnd_i == 1'B0)
+            else if(E_icode_i == `JXX && e_Cnd_i == `FALSE)
                 begin
-                    D_bubble_o = 1'B1;
-                    E_bubble_o = 1'B1;
+                    D_bubble_o = `TRUE;
+                    E_bubble_o = `TRUE;
                 end
             else if(E_icode_i == `RET)
                 begin
-                    F_stall_o = 1'B1;
-                    D_bubble_o = 1'B1;
+                    F_stall_o = `TRUE;
+                    D_bubble_o = `TRUE;
                 end
             else if(D_icode_i == `RET)
                 begin
-                    F_stall_o = 1'B1;
+                    F_stall_o = `TRUE;
                 end
             else
                 begin
-                    F_stall_o = 1'B0;
-                    D_bubble_o = 1'B0;
-                    D_stall_o = 1'B0;
-                    E_bubble_o = 1'B0;
-                    set_cc_o = 1'B1;
-                    M_bubble_o = 1'B0;
-                    W_stall_o = 1'B0;
+                    F_stall_o = `FALSE;
+                    D_bubble_o = `FALSE;
+                    D_stall_o = `FALSE;
+                    E_bubble_o = `FALSE;
+                    set_cc_o = `TRUE;
+                    M_bubble_o = `FALSE;
+                    W_stall_o = `FALSE;
                 end
         end
 

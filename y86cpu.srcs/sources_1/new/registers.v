@@ -36,7 +36,7 @@ module registers(
         begin
             if(rst == `RST_EN || D_rA_i >= `NREG)
             begin
-                r_valA_o = `DATA_WIDTH'H0;
+                r_valA_o = `DATA_ZERO;
             end
             else if(D_rA_i == W_dstM_i)
             begin
@@ -56,7 +56,7 @@ module registers(
         begin
             if(rst == `RST_EN || D_rB_i >= `NREG)
             begin
-                r_valB_o = `DATA_WIDTH'H0;
+                r_valB_o = `DATA_ZERO;
             end
             else if(D_rB_i == W_dstM_i)
             begin

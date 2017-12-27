@@ -10,16 +10,16 @@ module fetch_reg(
     
     initial
     begin
-        F_predPC_o <= `ADDR_WIDTH'H0;
+        F_predPC_o <= `ADDR_ZERO;
     end
     
     always @(posedge clk)
         begin
-            if(rst == `RST_EN || f_predPC_i === 64'BX)
+            if(rst == `RST_EN)
             begin
-                F_predPC_o <= `ADDR_WIDTH'H0;
+                F_predPC_o <= `ADDR_ZERO;
             end
-            else if(F_stall_i == 1'B0)
+            else if(F_stall_i == `FALSE)
             begin
                 F_predPC_o <= f_predPC_i;
             end

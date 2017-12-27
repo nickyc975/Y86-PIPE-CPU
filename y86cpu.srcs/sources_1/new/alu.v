@@ -35,21 +35,21 @@ module alu(
                     e_valE_o = aluA_i & aluB_i;
                     ZF_o = e_valE_o == 0;
                     SF_o = e_valE_o[`DATA_WIDTH-1];
-                    OF_o = 1'B0;
+                    OF_o = `FALSE;
                 end
             `XORQ:
                 begin
                     e_valE_o = aluA_i ^ aluB_i;
                     ZF_o = e_valE_o == 0;
                     SF_o = e_valE_o[`DATA_WIDTH-1];
-                    OF_o = 1'B0;
+                    OF_o = `FALSE;
                 end
             default:
                 begin
-                    e_valE_o = `DATA_WIDTH'H0;
-                    ZF_o = 1'H0;
-                    SF_o = 1'H0;
-                    OF_o = 1'H0;
+                    e_valE_o = `DATA_ZERO;
+                    ZF_o = `FALSE;
+                    SF_o = `FALSE;
+                    OF_o = `FALSE;
                 end
         endcase
     end

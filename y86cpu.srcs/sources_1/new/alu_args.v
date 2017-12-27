@@ -18,7 +18,7 @@ module alu_args(
                 `CXX:
                     begin
                         aluA_o = E_valA_i;
-                        aluB_o = `DATA_WIDTH'H0;
+                        aluB_o = `DATA_ZERO;
                         fun_o = `ADDQ;
                     end
                 `IXX:
@@ -26,7 +26,7 @@ module alu_args(
                         aluB_o = E_valC_i;
                         if(E_ifun_i == `IRMOVQ)
                         begin
-                            aluA_o = `DATA_WIDTH'H0;
+                            aluA_o = `DATA_ZERO;
                             fun_o = `ADDQ;
                         end
                         else
@@ -55,8 +55,8 @@ module alu_args(
                     end
                 `JXX:
                     begin
-                        aluA_o = `DATA_WIDTH'H0;
-                        aluB_o = `DATA_WIDTH'H0;
+                        aluA_o = `DATA_ZERO;
+                        aluB_o = `DATA_ZERO;
                         fun_o = `NOPQ;
                     end
                 `CALL:
@@ -85,8 +85,8 @@ module alu_args(
                     end
                 default:
                     begin
-                        aluA_o = `DATA_WIDTH'H0;
-                        aluB_o = `DATA_WIDTH'H0;
+                        aluA_o = `DATA_ZERO;
+                        aluB_o = `DATA_ZERO;
                         fun_o = `NOPQ;
                     end
             endcase

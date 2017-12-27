@@ -26,21 +26,34 @@ module decode_reg(
     output reg [`STAT_BUS] D_stat_o
     );
 
+    initial
+        begin
+            D_icode_o <= `ICODE_ZERO;
+            D_ifun_o <= `IFUN_ZERO;
+            D_rA_o <= `NREG;
+            D_rB_o <= `NREG;
+            D_valC_o <= `DATA_ZERO;
+            D_valP_o <= `ADDR_ZERO;
+            D_dstE_o <= `NREG;
+            D_dstM_o <= `NREG;
+            D_stat_o <= `SAOK;
+        end
+
     always @(posedge clk)
     begin
         if(rst == `RST_EN)
             begin
-                D_icode_o <= `ICODE_WIDTH'H0;
-                D_ifun_o <= `IFUN_WIDTH'H0;
+                D_icode_o <= `ICODE_ZERO;
+                D_ifun_o <= `IFUN_ZERO;
                 D_rA_o <= `NREG;
                 D_rB_o <= `NREG;
-                D_valC_o <= `DATA_WIDTH'H0;
-                D_valP_o <= `ADDR_WIDTH'H0;
+                D_valC_o <= `DATA_ZERO;
+                D_valP_o <= `ADDR_ZERO;
                 D_dstE_o <= `NREG;
                 D_dstM_o <= `NREG;
-                D_stat_o <= `STAT_WIDTH'H0;
+                D_stat_o <= `SAOK;
             end
-        else if(D_stall_i == 1'B1)
+        else if(D_stall_i == `TRUE)
             begin
                 D_icode_o <= D_icode_o;
                 D_ifun_o <= D_ifun_o;
@@ -52,14 +65,14 @@ module decode_reg(
                 D_dstM_o <= D_dstM_o;
                 D_stat_o <= D_stat_o;
             end
-        else if(D_bubble_i == 1'B1)
+        else if(D_bubble_i == `TRUE)
             begin
                 D_icode_o <= `NOP;
-                D_ifun_o <= `IFUN_WIDTH'H0;
+                D_ifun_o <= `IFUN_ZERO;
                 D_rA_o <= `NREG;
                 D_rB_o <= `NREG;
-                D_valC_o <= `DATA_WIDTH'H0;
-                D_valP_o <= `ADDR_WIDTH'H0;
+                D_valC_o <= `DATA_ZERO;
+                D_valP_o <= `ADDR_ZERO;
                 D_dstE_o <= `NREG;
                 D_dstM_o <= `NREG;
                 D_stat_o <= `SAOK;

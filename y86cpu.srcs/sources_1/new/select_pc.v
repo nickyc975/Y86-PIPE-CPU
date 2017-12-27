@@ -11,14 +11,9 @@ module select_pc(
     output reg [`ADDR_BUS] f_pc_o
     );
     
-    initial 
-        begin
-            f_pc_o = `ADDR_WIDTH'H0;
-        end
-    
     always @(*)
         begin
-            if(M_icode_i == `JXX && M_Cnd_i)
+            if(M_icode_i == `JXX && !M_Cnd_i)
             begin
                 f_pc_o = M_valA_i;
             end

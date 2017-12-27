@@ -37,13 +37,13 @@ module decode(
                 end
             `HALT:
                 begin
-                    d_valA_o = `DATA_WIDTH'H0;
-                    d_valB_o = `DATA_WIDTH'H0;
+                    d_valA_o = `DATA_ZERO;
+                    d_valB_o = `DATA_ZERO;
                 end
             `NOP:
                 begin
-                    d_valA_o = `DATA_WIDTH'H0;
-                    d_valB_o = `DATA_WIDTH'H0;
+                    d_valA_o = `DATA_ZERO;
+                    d_valB_o = `DATA_ZERO;
                 end
             default:
                 begin

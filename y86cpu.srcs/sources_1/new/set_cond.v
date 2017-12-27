@@ -17,14 +17,14 @@ module set_cond(
     
     initial
     begin
-        ZF = 1'B0;
-        SF = 1'B0;
-        OF = 1'B0;
+        ZF = `FALSE;
+        SF = `FALSE;
+        OF = `FALSE;
     end
     
     always @(*)
     begin
-        if(set_cc_i == 1'B1 && (E_icode_i == `OPQ || (E_icode_i == `IXX && E_ifun_i != `IRMOVQ)))
+        if(set_cc_i == `TRUE && (E_icode_i == `OPQ || (E_icode_i == `IXX && E_ifun_i != `IRMOVQ)))
             begin
                 ZF = ZF_i;
                 SF = SF_i;
@@ -45,10 +45,10 @@ module set_cond(
                     `JNE:      e_Cnd_o = !ZF;
                     `JGE:      e_Cnd_o = ZF || (SF && OF) || !SF;
                      `JG:      e_Cnd_o = (SF && OF) || !SF;
-                     default:  e_Cnd_o = 1'B1;
+                     default:  e_Cnd_o = `TRUE;
                 endcase
                     
-                if(e_Cnd_o == 1'B1)
+                if(e_Cnd_o == `TRUE)
                     e_dstE_o = E_dstE_i;
                 else
                     e_dstE_o = `NREG;
@@ -56,6 +56,7 @@ module set_cond(
         else
             begin
                 e_dstE_o = E_dstE_i;
+                e_Cnd_o = `TRUE;
             end
     end
 endmodule

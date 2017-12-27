@@ -15,25 +15,26 @@ module d_mem(
     
     initial
         begin
-            error = 1'B0;
+            error = `FALSE;
+            data_o = `DATA_ZERO;
         end
 
     always @(*)
         begin
             if(rst == `RST_EN)
             begin
-                data_o = `DATA_WIDTH'B0;
-                error = 1'B0;
+                data_o = `DATA_ZERO;
+                error = `FALSE;
             end
             else if(addr > `MEM_SIZE)
             begin
-                error = 1'B1;
+                error = `TRUE;
             end
             else if(write == `FALSE && addr <= `MEM_SIZE - 7)
             begin
                 data_o = {mem[addr], mem[addr+1], mem[addr+2], mem[addr+3],
-                           mem[addr+4], mem[addr+5], mem[addr+6], mem[addr+7]};
-                error = 1'B0;
+                          mem[addr+4], mem[addr+5], mem[addr+6], mem[addr+7]};
+                error = `FALSE;
             end
             else
             begin
@@ -49,11 +50,11 @@ module d_mem(
                 begin
                     {mem[addr], mem[addr+1], mem[addr+2], mem[addr+3],
                      mem[addr+4], mem[addr+5], mem[addr+6], mem[addr+7]} <= data_i;
-                    error = 1'B0;
+                    error = `FALSE;
                 end
                 else
                 begin
-                    error = 1'B1;
+                    error = `TRUE;
                 end
             end
             else

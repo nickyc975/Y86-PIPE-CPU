@@ -20,26 +20,37 @@ module mem_reg(
     output reg [`REG_ADDR_BUS] M_dstE_o,
     output reg [`REG_ADDR_BUS] M_dstM_o
     );
+
+    initial
+        begin
+            M_Cnd_o  <= `TRUE;
+            M_stat_o <= `SAOK;
+            M_icode_o <= `ICODE_ZERO;
+            M_valE_o <= `DATA_ZERO;
+            M_valA_o <= `DATA_ZERO;
+            M_dstE_o <= `NREG;
+            M_dstM_o <= `NREG;
+        end
     
     always @(posedge clk)
         begin
             if(rst == `RST_EN)
             begin
-                M_Cnd_o  <= 1'B0;
-                M_stat_o <= `STAT_WIDTH'B0;
-                M_icode_o <= `ICODE_WIDTH'H0;
-                M_valE_o <= `DATA_WIDTH'H0;
-                M_valA_o <= `DATA_WIDTH'H0;
+                M_Cnd_o  <= `TRUE;
+                M_stat_o <= `SAOK;
+                M_icode_o <= `ICODE_ZERO;
+                M_valE_o <= `DATA_ZERO;
+                M_valA_o <= `DATA_ZERO;
                 M_dstE_o <= `NREG;
                 M_dstM_o <= `NREG;
             end
-            else if(M_bubble_i == 1'B1)
+            else if(M_bubble_i == `TRUE)
             begin
                 M_Cnd_o  <= e_Cnd_i;
                 M_stat_o <= `SAOK;
                 M_icode_o <= `NOP;
-                M_valE_o <= `DATA_WIDTH'H0;
-                M_valA_o <= `DATA_WIDTH'H0;
+                M_valE_o <= `DATA_ZERO;
+                M_valA_o <= `DATA_ZERO;
                 M_dstE_o <= `NREG;
                 M_dstM_o <= `NREG;
             end

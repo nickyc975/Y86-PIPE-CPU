@@ -24,28 +24,40 @@ module execute_reg(
     output reg [`REG_ADDR_BUS] E_dstE_o,
     output reg [`REG_ADDR_BUS] E_dstM_o
     );
+
+    initial
+        begin
+            E_stat_o <= `SAOK;
+            E_icode_o <= `ICODE_ZERO;
+            E_ifun_o <= `IFUN_ZERO;
+            E_valA_o <= `DATA_ZERO;
+            E_valB_o <= `DATA_ZERO;
+            E_valC_o <= `DATA_ZERO;
+            E_dstE_o <= `NREG;
+            E_dstM_o <= `NREG;
+        end
     
     always @(posedge clk)
         begin
             if(rst == `RST_EN)
             begin
                 E_stat_o <= `SAOK;
-                E_icode_o <= `ICODE_WIDTH'H0;
-                E_ifun_o <= `IFUN_WIDTH'H0;
-                E_valA_o <= `DATA_WIDTH'H0;
-                E_valB_o <= `DATA_WIDTH'H0;
-                E_valC_o <= `DATA_WIDTH'H0;
+                E_icode_o <= `ICODE_ZERO;
+                E_ifun_o <= `IFUN_ZERO;
+                E_valA_o <= `DATA_ZERO;
+                E_valB_o <= `DATA_ZERO;
+                E_valC_o <= `DATA_ZERO;
                 E_dstE_o <= `NREG;
                 E_dstM_o <= `NREG;
             end
-            else if(E_bubble_i == 1'B1)
+            else if(E_bubble_i == `TRUE)
             begin
                 E_stat_o <= `SAOK;
                 E_icode_o <= `NOP;
-                E_ifun_o <= `IFUN_WIDTH'H0;
-                E_valA_o <= `DATA_WIDTH'H0;
-                E_valB_o <= `DATA_WIDTH'H0;
-                E_valC_o <= `DATA_WIDTH'H0;
+                E_ifun_o <= `IFUN_ZERO;
+                E_valA_o <= `DATA_ZERO;
+                E_valB_o <= `DATA_ZERO;
+                E_valC_o <= `DATA_ZERO;
                 E_dstE_o <= `NREG;
                 E_dstM_o <= `NREG;
             end

@@ -9,7 +9,7 @@ module set_m_stat(
     
     always @(*)
         begin
-          if(mem_error_i == 1'B0)
+          if(mem_error_i == `FALSE)
             begin
                 m_stat_o = M_stat_i;
             end

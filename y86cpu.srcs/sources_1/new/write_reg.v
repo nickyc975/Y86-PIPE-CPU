@@ -18,6 +18,16 @@ module write_reg(
     output reg [`REG_ADDR_BUS] W_dstE_o,
     output reg [`REG_ADDR_BUS] W_dstM_o
     );
+
+    initial
+        begin   
+             W_stat_o <= `SAOK;
+            W_icode_o <= `NOP;
+            W_valE_o <= `DATA_ZERO;
+            W_valM_o <= `DATA_ZERO;
+            W_dstE_o <= `NREG;
+            W_dstM_o <= `NREG;
+        end
     
     always @(posedge clk)
         begin
@@ -25,12 +35,12 @@ module write_reg(
             begin
                 W_stat_o <= `SAOK;
                 W_icode_o <= `NOP;
-                W_valE_o <= `DATA_WIDTH'H0;
-                W_valM_o <= `DATA_WIDTH'H0;
+                W_valE_o <= `DATA_ZERO;
+                W_valM_o <= `DATA_ZERO;
                 W_dstE_o <= `NREG;
                 W_dstM_o <= `NREG;
             end
-            else if(W_stall_i == 1'B1)
+            else if(W_stall_i == `TRUE)
             begin
                 W_stat_o <= W_stat_o;
                 W_icode_o <= W_icode_o;
