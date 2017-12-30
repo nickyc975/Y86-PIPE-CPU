@@ -33,6 +33,7 @@ module controller(
 
     always @(*)
         begin
+            /* deal with exceptions */
             if(m_stat_i != `SAOK || W_stat_i != `SAOK)
                 begin
                     F_stall_o = `TRUE;
@@ -44,11 +45,13 @@ module controller(
                             W_stall_o = `TRUE;
                         end
                 end
+            /* deal with return */
             else if(M_icode_i == `RET)
                 begin
                     F_stall_o = `TRUE;
                     D_bubble_o = `TRUE;
                 end
+            /* deal with load/use risks */
             else if((E_icode_i == `MRMOVQ || E_icode_i == `POPQ) &&
                     E_dstM_i != `NREG && (D_rA_i == E_dstM_i || D_rB_i == E_dstM_i))
                 begin
@@ -56,21 +59,25 @@ module controller(
                     D_stall_o = `TRUE;
                     E_bubble_o = `TRUE;
                 end
+            /* deal with wrong predictions */
             else if(E_icode_i == `JXX && e_Cnd_i == `FALSE)
                 begin
                     D_bubble_o = `TRUE;
                     E_bubble_o = `TRUE;
                 end
+            /* deal with return */
             else if(E_icode_i == `RET)
                 begin
                     F_stall_o = `TRUE;
                     D_bubble_o = `TRUE;
                 end
+            /* deal with return */
             else if(D_icode_i == `RET)
                 begin
                     F_stall_o = `TRUE;
                     D_bubble_o = `TRUE;
                 end
+            /* if every thing is ok */
             else
                 begin
                     F_stall_o = `FALSE;

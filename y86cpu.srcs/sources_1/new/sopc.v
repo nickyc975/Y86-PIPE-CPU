@@ -14,6 +14,7 @@ module sopc(
     wire i_mem_error;
     wire d_mem_error;
     
+    /* y86 cpu */
     y86cpu cpu
     (
         .clk_i(clk),
@@ -29,13 +30,15 @@ module sopc(
         .data_o(data_o_bus)
     );
 
+    /* instruction memory */
     i_mem inst
     (
         .addr(pc),
         .inst(inst_bus),
         .error(i_mem_error)
     );
-        
+    
+    /* data memory */
     d_mem data
     (
         .clk(clk),

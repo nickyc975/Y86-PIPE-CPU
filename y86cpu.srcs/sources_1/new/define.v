@@ -68,7 +68,7 @@
 `define R14     4'HE
 `define NREG    4'HF
 
-// Data info
+// Data width
 `define ICODE_WIDTH     4
 `define IFUN_WIDTH      4
 `define BYTE_WIDTH      8
@@ -76,7 +76,7 @@
 `define DATA_WIDTH      64
 `define INST_WIDTH      80
 
-// Bus info
+// Buses
 `define IFUN_BUS        3:0
 `define ICODE_BUS       3:0
 `define REG_ADDR_BUS    3:0
@@ -85,6 +85,7 @@
 `define DATA_BUS        63:0
 `define STAT_BUS        2:0
 
+// Instruction parts
 `define ICODE           79:76
 `define IFUN            75:72
 `define SRCA            71:68
@@ -99,7 +100,7 @@
 `define BYTE1           15:8
 `define BYTE0           7:0
 
-// Memory
+// Memory size
 `define MEM_SIZE        131071
 
 // Default values

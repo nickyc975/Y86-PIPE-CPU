@@ -1,6 +1,6 @@
 `timescale 1ns / 1ns
 
-module cpu_tb;
+module sopc_tb;
     reg clk;
     reg rst;
     
@@ -16,5 +16,10 @@ module cpu_tb;
             #5 rst <= 1'B0;  
             #1000 $stop;
         end
-    sopc test(.clk(clk), .rst(rst));
+    
+    sopc y86_sopc
+    (
+        .clk(clk),
+        .rst(rst)
+    );
 endmodule

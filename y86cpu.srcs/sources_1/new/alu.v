@@ -20,7 +20,7 @@ module alu(
                     ZF_o = e_valE_o == 0;
                     SF_o = e_valE_o[`DATA_WIDTH-1];
                     OF_o = (aluA_i[`DATA_WIDTH-1] == aluB_i[`DATA_WIDTH-1]) &&
-                          (aluA_i[`DATA_WIDTH-1] != e_valE_o[`DATA_WIDTH-1]);
+                           (aluA_i[`DATA_WIDTH-1] != e_valE_o[`DATA_WIDTH-1]);
                 end
             `SUBQ:
                 begin
@@ -28,7 +28,7 @@ module alu(
                     ZF_o = e_valE_o == 0;
                     SF_o = e_valE_o[`DATA_WIDTH-1];
                     OF_o = (aluA_i[`DATA_WIDTH-1] != aluB_i[`DATA_WIDTH-1]) &&
-                          (aluA_i[`DATA_WIDTH-1] != e_valE_o[`DATA_WIDTH-1]);
+                           (aluA_i[`DATA_WIDTH-1] != e_valE_o[`DATA_WIDTH-1]);
                 end
             `ANDQ:
                 begin
