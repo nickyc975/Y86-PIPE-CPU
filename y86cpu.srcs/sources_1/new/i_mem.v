@@ -12,7 +12,7 @@ module i_mem(
         begin
             error = `FALSE;
             inst = `NONE_INST;
-            $readmemh("F:/Projects/Verilog/y86cpu/insts.data", mem);
+            $readmemh("F:/Projects/Verilog/y86cpu/y86cpu.srcs/sim_1/new/insts.data", mem);
         end
     
     always @(*)

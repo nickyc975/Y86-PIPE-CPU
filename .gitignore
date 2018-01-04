@@ -83,5 +83,3 @@ y86cpu.runs/synth_1/y86cpu.tcl
 y86cpu.runs/synth_1/y86cpu.vds
 y86cpu.runs/.jobs/vrs_config_4.xml
 y86cpu.runs/.jobs/vrs_config_5.xml
-y86cpu.srcs/sim_1/new/insts.data
-insts.data

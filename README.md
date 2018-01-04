@@ -113,9 +113,11 @@ Y86的指令执行被划分为五个阶段：取址、译码、执行、访存�
 
 __核心模块__
 
-1. 取指寄存器模块：fetch_reg.v
+1. 取指寄存器模块：fetch_reg
 
-功能：暂存前一阶段预测的PC值，供select_pc.v模块使用；
+源文件：[fetch_reg.v](./y86cpu.srcs/sources_1/new/fetch_reg.v)
+
+功能：暂存前一阶段预测的PC值，供select_pc模块使用；
 
 接口设计：
 
@@ -127,7 +129,9 @@ __核心模块__
         output reg [`ADDR_BUS] F_predPC_o
     );
 
-2. 指令解析及PC预测模块：fetch.v
+2. 指令解析及PC预测模块：fetch
+
+源文件：[fetch.v](./y86cpu.srcs/sources_1/new/fetch.v)
 
 功能：解析取得的指令并根据指令码预测下一个PC；
 
@@ -150,7 +154,9 @@ __核心模块__
         output reg [`STAT_BUS] f_stat_o
     );
 
-3. PC选择模块：select_pc.v
+3. PC选择模块：select_pc
+
+源文件：[select_pc.v](./y86cpu.srcs/sources_1/new/select_pc.v)
 
 功能：选择PC；
 
@@ -167,9 +173,11 @@ __核心模块__
         output reg [`ADDR_BUS] f_pc_o
     );
 
-4. 译码寄存器模块：decode_reg.v
+4. 译码寄存器模块：decode_reg
 
-功能：暂存fetch.v模块解析出的指令信息；
+源文件：[decode_reg.v](./y86cpu.srcs/sources_1/new/decode_reg.v)
+
+功能：暂存fetch模块解析出的指令信息；
 
 接口设计：
 
@@ -199,9 +207,11 @@ __核心模块__
         output reg [`STAT_BUS] D_stat_o
     );
 
-5. 译码模块：decode.v
+5. 译码模块：decode
 
-功能：根据指令关系决定送往执行寄存器模块的valA和valB的值；
+源文件：[decode.v](./y86cpu.srcs/sources_1/new/decode.v)
+
+功能：根据指令关系决定送往执行寄存器模块的d_valA和d_valB的值；
 
 接口设计：
 
@@ -227,7 +237,9 @@ __核心模块__
         output reg [`DATA_BUS] d_valB_o
     );
 
-6. 执行寄存器模块：execute_reg.v
+6. 执行寄存器模块：execute_reg
+
+源文件：[execute_reg.v](./y86cpu.srcs/sources_1/new/execute_reg.v)
 
 功能：暂存上一阶段的指令信息；
 
@@ -258,7 +270,9 @@ __核心模块__
         output reg [`REG_ADDR_BUS] E_dstM_o
     );
 
-7. ALU操作数判断模块：alu_args.v
+7. ALU操作数判断模块：alu_args
+
+源文件：[alu_args.v](./y86cpu.srcs/sources_1/new/alu_args.v)
 
 功能：根据执行寄存器中的指令码和功能码决定传送给算术逻辑运算模块的值和运算类型；
 
@@ -276,9 +290,11 @@ __核心模块__
         output reg [`IFUN_BUS] fun_o
     );
 
-8. ALU（算术逻辑运算模块）：alu.v
+8. ALU（算术逻辑运算模块）：alu
 
-功能：根据alu_args.v模块的输出执行相应的计算并设置标志位寄存器；
+源文件：[alu.v](./y86cpu.srcs/sources_1/new/alu.v)
+
+功能：根据alu_args模块的输出执行相应的计算并设置标志位寄存器；
 
 接口设计：
 
@@ -293,7 +309,9 @@ __核心模块__
         output reg OF_o
     );
 
-9. 条件码设置模块：set_cond.v
+9. 条件码设置模块：set_cond
+
+源文件：[set_cond.v](./y86cpu.srcs/sources_1/new/set_cond.v)
 
 功能：设置条件码并确定条件转移指令的目的寄存器；
 
@@ -312,7 +330,9 @@ __核心模块__
         output reg [`REG_ADDR_BUS] e_dstE_o
     );
 
-10. 访存寄存器模块：mem_reg.v
+10. 访存寄存器模块：mem_reg
+
+源文件：[mem_reg.v](./y86cpu.srcs/sources_1/new/mem_reg.v)
 
 功能：暂存上一阶段的指令信息；
 
@@ -339,7 +359,9 @@ __核心模块__
         output reg [`REG_ADDR_BUS] M_dstM_o
     );
 
-11. 访存模块：mem.v
+11. 访存模块：mem
+
+源文件：[mem.v](./y86cpu.srcs/sources_1/new/mem.v)
 
 功能：确定访存操作（读/写）和需要访问的地址；
 
@@ -354,7 +376,9 @@ __核心模块__
         output reg write
     );
 
-12. 访存阶段状态码设置模块：set_m_stat.v
+12. 访存阶段状态码设置模块：set_m_stat
+
+源文件：[set_m_stat.v](./y86cpu.srcs/sources_1/new/set_m_stat.v)
 
 功能：根据访存结果设置访存阶段的状态码；
 
@@ -367,7 +391,9 @@ __核心模块__
         output reg [`STAT_BUS] m_stat_o
     );
 
-13. 写回寄存器模块：write_reg.v
+13. 写回寄存器模块：write_reg
+
+源文件：[write_reg.v](./y86cpu.srcs/sources_1/new/write_reg.v)
 
 功能：暂存上一阶段的指令信息；
 
@@ -392,7 +418,9 @@ __核心模块__
         output reg [`REG_ADDR_BUS] W_dstM_o
     );
 
-14. 通用寄存器模块：registers.v
+14. 通用寄存器模块：registers
+
+源文件：[registers.v](./y86cpu.srcs/sources_1/new/registers.v)
 
 功能：处理器的通用寄存器模块；
 
@@ -412,7 +440,9 @@ __核心模块__
         output reg [`DATA_BUS]r_valB_o
     );
 
-15. 流水线控制逻辑模块：controller.v
+15. 流水线控制逻辑模块：controller
+
+源文件：[controller.v](./y86cpu.srcs/sources_1/new/controller.v)
 
 功能：控制流水线运作，插入气泡或暂停流水线；
 
@@ -440,7 +470,9 @@ __核心模块__
 
 __外围模块__
 
-1. 指令内存模块：i_mem.v
+1. 指令内存模块：i_mem
+
+源文件：[i_mem.v](./y86cpu.srcs/sources_1/new/i_mem.v)
 
 功能：存储程序指令；
 
@@ -453,6 +485,8 @@ __外围模块__
     );
 
 2. 数据内存模块：d_mem.v
+
+源文件：[d_mem.v](./y86cpu.srcs/sources_1/new/d_mem.v)
 
 功能：存储程序数据；
 
@@ -468,3 +502,29 @@ __外围模块__
         output reg [`DATA_BUS] data_o,
         output reg error
     );
+
+__其他文件说明__
+
+* [define.v](./y86cpu.srcs/sources_1/new/define.v)
+
+全局宏定义
+
+* [y86cpu.v](./y86cpu.srcs/sources_1/new/y86cpu.v)
+
+第一层模块封装，将全部核心模块封装为cpu模块，留出时钟接口、重置接口以及内存IO接口
+
+* [sopc.v](./y86cpu.srcs/sources_1/new/sopc.v)
+
+第二层模块封装，将cpu模块和外围模块封装为sopc模块，留出时钟和重置接口
+
+* [sopc_tb.v](./y86cpu.srcs/sim_1/new/sopc_tb.v)
+
+TestBench模块，用于模拟仿真
+
+* [insts.data](./y86cpu.srcs/sim_1/new/insts.data)
+
+用于仿真的机器指令，用16进制表示，每行表示一个字节，在i_mem模块中使用$readmemh读取文件内容以初始化指令内存
+
+* [asum.yo](./y86cpu.srcs/sim_1/new/asum.yo)
+
+上述机器指令的汇编版本，来自于原书课后作业的配套材料
