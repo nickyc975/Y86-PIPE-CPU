@@ -15,7 +15,6 @@ module fetch(
     output reg [`REG_ADDR_BUS] f_dstM_o,
     output reg [`ADDR_BUS] f_predPC_o,
     output reg [`STAT_BUS] f_stat_o
-    
     );
     
     always @(f_pc_i, inst_i, mem_error_i)

@@ -73,22 +73,388 @@ Y86-64共有15个64位寄存器，编号从0x0到0xE，0xF则表示不使用寄�
 
 Y86的指令执行被划分为五个阶段：取址、译码、执行、访存、写回。
 
-* 取址
+> * 取址
+>
+> 根据之前的执行结果选择PC值并据此从内存中取出将要执行的指令，同时根据指令码将解析指令中的源寄存器、目的寄存器、立即数等。
+>
+> * 译码
+>
+> 根据指令码选择将要送到执行阶段的操作数，包括使用数据转发机制处理数据冒险。
+>
+> * 执行
+>
+> ALU根据指令码执行相应的计算并设置标志位和条件码。
+>
+> * 访存
+>
+> 若指令需要读写内存，则在本阶段进行。
+>
+> * 写回
+>
+> 将ALU的运算结果和访存阶段取出的数据（如果有的话）写回到目的寄存器。
 
-根据之前的执行结果选择PC值并据此从内存中取出将要执行的指令，同时根据指令码将解析指令中的源寄存器、目的寄存器、立即数等。
+* __Y86-64结构设计__
 
-* 译码
+书中给出的Y86-64流水线的最终结构如图：
 
-根据指令码选择将要送到执行阶段的操作数，包括使用数据转发机制处理数据冒险。
+!(./pipe_struct.jpg)
 
-* 执行
+* __Y86-64流水线处理器模块设计__
 
-ALU根据指令码执行相应的计算并设置标志位和条件码。
+__核心模块__
 
-* 访存
+1. 取指寄存器模块：fetch_reg.v
 
-若指令需要读写内存，则在本阶段进行。
+功能：暂存前一阶段预测的PC值，供select_pc.v模块使用；
 
-* 写回
+接口设计：
 
-将ALU的运算结果和访存阶段取出的数据（如果有的话）写回到目的寄存器。
+    module fetch_reg(
+        input wire clk,
+        input wire rst,
+        input wire F_stall_i,
+        input wire [`ADDR_BUS] f_predPC_i,
+        output reg [`ADDR_BUS] F_predPC_o
+    );
+
+2. 指令解析及PC预测模块：fetch.v
+
+功能：解析取得的指令并根据指令码预测下一个PC；
+
+接口设计：
+
+    module fetch(
+        input wire [`ADDR_BUS] f_pc_i,
+        input wire [`INST_BUS] inst_i,
+        input wire mem_error_i,
+
+        output reg [`ICODE_BUS] f_icode_o,
+        output reg [`IFUN_BUS] f_ifun_o,
+        output reg [`REG_ADDR_BUS] f_rA_o,
+        output reg [`REG_ADDR_BUS] f_rB_o,
+        output reg [`DATA_BUS] f_valC_o,
+        output reg [`ADDR_BUS] f_valP_o,
+        output reg [`REG_ADDR_BUS] f_dstE_o,
+        output reg [`REG_ADDR_BUS] f_dstM_o,
+        output reg [`ADDR_BUS] f_predPC_o,
+        output reg [`STAT_BUS] f_stat_o
+    );
+
+3. PC选择模块：select_pc.v
+
+功能：选择PC；
+
+接口设计：
+
+    module select_pc(
+        input wire M_Cnd_i,
+        input wire [`ICODE_BUS] M_icode_i,
+        input wire [`ICODE_BUS] W_icode_i,
+        input wire [`ADDR_BUS] M_valA_i,
+        input wire [`ADDR_BUS] W_valM_i,
+        input wire [`ADDR_BUS] F_predPC_i,
+
+        output reg [`ADDR_BUS] f_pc_o
+    );
+
+4. 译码寄存器模块：decode_reg.v
+
+功能：暂存fetch.v模块解析出的指令信息；
+
+接口设计：
+
+    module decode_reg(
+        input wire rst,
+        input wire clk,
+        input wire D_stall_i,
+        input wire D_bubble_i,
+        input wire [`ICODE_BUS] f_icode_i,
+        input wire [`IFUN_BUS] f_ifun_i,
+        input wire [`REG_ADDR_BUS] f_rA_i,
+        input wire [`REG_ADDR_BUS] f_rB_i,
+        input wire [`DATA_BUS] f_valC_i,
+        input wire [`ADDR_BUS] f_valP_i,
+        input wire [`REG_ADDR_BUS] f_dstE_i,
+        input wire [`REG_ADDR_BUS] f_dstM_i,
+        input wire [`STAT_BUS] f_stat_i,
+
+        output reg [`ICODE_BUS] D_icode_o,
+        output reg [`IFUN_BUS] D_ifun_o,
+        output reg [`REG_ADDR_BUS] D_rA_o,
+        output reg [`REG_ADDR_BUS] D_rB_o,
+        output reg [`DATA_BUS] D_valC_o,
+        output reg [`ADDR_BUS] D_valP_o,
+        output reg [`REG_ADDR_BUS] D_dstE_o,
+        output reg [`REG_ADDR_BUS] D_dstM_o,
+        output reg [`STAT_BUS] D_stat_o
+    );
+
+5. 译码模块：decode.v
+
+功能：根据指令关系决定送往执行寄存器模块的valA和valB的值；
+
+接口设计：
+
+    module decode(
+        input wire [`ICODE_BUS]    D_icode_i,
+        input wire [`ADDR_BUS]     D_valP_i,
+        input wire [`REG_ADDR_BUS] D_srcA_i,
+        input wire [`REG_ADDR_BUS] D_srcB_i,
+        input wire [`DATA_BUS]     r_valA_i,
+        input wire [`DATA_BUS]     r_valB_i,
+        input wire [`REG_ADDR_BUS] e_dstE_i,
+        input wire [`DATA_BUS]     e_valE_i,
+        input wire [`REG_ADDR_BUS] M_dstE_i,
+        input wire [`DATA_BUS]     M_valE_i,
+        input wire [`REG_ADDR_BUS] M_dstM_i,
+        input wire [`DATA_BUS]     m_valM_i,
+        input wire [`REG_ADDR_BUS] W_dstE_i,
+        input wire [`DATA_BUS]     W_valE_i,
+        input wire [`REG_ADDR_BUS] W_dstM_i,
+        input wire [`DATA_BUS]     W_valM_i,
+
+        output reg [`DATA_BUS] d_valA_o,
+        output reg [`DATA_BUS] d_valB_o
+    );
+
+6. 执行寄存器模块：execute_reg.v
+
+功能：暂存上一阶段的指令信息；
+
+接口设计：
+
+    module execute_reg(
+        input wire clk,
+        input wire rst,
+        input wire E_bubble_i,
+        input wire [`STAT_BUS] D_stat_i,
+        input wire [`ICODE_BUS] D_icode_i,
+        input wire [`IFUN_BUS] D_ifun_i,
+        input wire [`DATA_BUS] D_valC_i,
+        input wire [`DATA_BUS] d_valA_i,
+        input wire [`DATA_BUS] d_valB_i,
+        input wire [`REG_ADDR_BUS] D_dstE_i,
+        input wire [`REG_ADDR_BUS] D_dstM_i,
+        input wire [`REG_ADDR_BUS] D_srcA_i,
+        input wire [`REG_ADDR_BUS] D_srcB_i,
+
+        output reg [`STAT_BUS] E_stat_o,
+        output reg [`ICODE_BUS] E_icode_o,
+        output reg [`IFUN_BUS] E_ifun_o,
+        output reg [`DATA_BUS] E_valC_o,
+        output reg [`DATA_BUS] E_valA_o,
+        output reg [`DATA_BUS] E_valB_o,
+        output reg [`REG_ADDR_BUS] E_dstE_o,
+        output reg [`REG_ADDR_BUS] E_dstM_o
+    );
+
+7. ALU操作数判断模块：alu_args.v
+
+功能：根据执行寄存器中的指令码和功能码决定传送给算术逻辑运算模块的值和运算类型；
+
+接口设计：
+
+    module alu_args(
+        input wire [`ICODE_BUS] E_icode_i,
+        input wire [`IFUN_BUS] E_ifun_i,
+        input wire [`DATA_BUS] E_valC_i,
+        input wire [`DATA_BUS] E_valA_i,
+        input wire [`DATA_BUS] E_valB_i,
+
+        output reg [`DATA_BUS] aluA_o,
+        output reg [`DATA_BUS] aluB_o,
+        output reg [`IFUN_BUS] fun_o
+    );
+
+8. ALU（算术逻辑运算模块）：alu.v
+
+功能：根据alu_args.v模块的输出执行相应的计算并设置标志位寄存器；
+
+接口设计：
+
+    module alu(
+        input wire [`DATA_BUS] aluA_i,
+        input wire [`DATA_BUS] aluB_i,
+        input wire [`IFUN_BUS] fun_i,
+
+        output reg [`DATA_BUS] e_valE_o,
+        output reg ZF_o,
+        output reg SF_o,
+        output reg OF_o
+    );
+
+9. 条件码设置模块：set_cond.v
+
+功能：设置条件码并确定条件转移指令的目的寄存器；
+
+接口设计：
+
+    module set_cond(
+        input wire set_cc_i,
+        input wire [`ICODE_BUS] E_icode_i,
+        input wire [`IFUN_BUS] E_ifun_i,
+        input wire [`REG_ADDR_BUS] E_dstE_i,
+        input wire ZF_i,
+        input wire SF_i,
+        input wire OF_i,
+
+        output reg e_Cnd_o,
+        output reg [`REG_ADDR_BUS] e_dstE_o
+    );
+
+10. 访存寄存器模块：mem_reg.v
+
+功能：暂存上一阶段的指令信息；
+
+接口设计：
+
+    module mem_reg(
+        input wire clk,
+        input wire rst,
+        input wire e_Cnd_i,
+        input wire M_bubble_i,
+        input wire [`STAT_BUS] E_stat_i,
+        input wire [`ICODE_BUS] E_icode_i,
+        input wire [`DATA_BUS] e_valE_i,
+        input wire [`DATA_BUS] E_valA_i,
+        input wire [`REG_ADDR_BUS] e_dstE_i,
+        input wire [`REG_ADDR_BUS] E_dstM_i,
+
+        output reg M_Cnd_o,
+        output reg [`STAT_BUS] M_stat_o,
+        output reg [`ICODE_BUS] M_icode_o,
+        output reg [`DATA_BUS] M_valE_o,
+        output reg [`DATA_BUS] M_valA_o,
+        output reg [`REG_ADDR_BUS] M_dstE_o,
+        output reg [`REG_ADDR_BUS] M_dstM_o
+    );
+
+11. 访存模块：mem.v
+
+功能：确定访存操作（读/写）和需要访问的地址；
+
+接口设计：
+
+    module mem(
+        input wire [`DATA_BUS] M_valE_i,
+        input wire [`DATA_BUS] M_valA_i,
+        input wire [`ICODE_BUS] M_icode_i,
+
+        output reg [`ADDR_BUS] addr,
+        output reg write
+    );
+
+12. 访存阶段状态码设置模块：set_m_stat.v
+
+功能：根据访存结果设置访存阶段的状态码；
+
+接口设计：
+
+    module set_m_stat(
+        input wire [`STAT_BUS] M_stat_i,
+        input wire mem_error_i,
+
+        output reg [`STAT_BUS] m_stat_o
+    );
+
+13. 写回寄存器模块：write_reg.v
+
+功能：暂存上一阶段的指令信息；
+
+接口设计：
+
+    module write_reg(
+        input wire clk,
+        input wire rst,
+        input wire W_stall_i,
+        input wire [`STAT_BUS] m_stat_i,
+        input wire [`ICODE_BUS] M_icode_i,
+        input wire [`DATA_BUS] M_valE_i,
+        input wire [`DATA_BUS] m_valM_i,
+        input wire [`REG_ADDR_BUS] M_dstE_i,
+        input wire [`REG_ADDR_BUS] M_dstM_i,
+
+        output reg [`STAT_BUS] W_stat_o,
+        output reg [`ICODE_BUS] W_icode_o,
+        output reg [`DATA_BUS] W_valE_o,
+        output reg [`DATA_BUS] W_valM_o,
+        output reg [`REG_ADDR_BUS] W_dstE_o,
+        output reg [`REG_ADDR_BUS] W_dstM_o
+    );
+
+14. 通用寄存器模块：registers.v
+
+功能：处理器的通用寄存器模块；
+
+接口设计：
+
+    module registers(
+        input wire clk,
+        input wire rst,
+        input wire [`REG_ADDR_BUS]W_dstM_i,
+        input wire [`REG_ADDR_BUS]W_dstE_i,
+        input wire [`DATA_BUS]W_valM_i,
+        input wire [`DATA_BUS]W_valE_i,
+        input wire [`REG_ADDR_BUS]D_rA_i,
+        input wire [`REG_ADDR_BUS]D_rB_i,
+
+        output reg [`DATA_BUS]r_valA_o,
+        output reg [`DATA_BUS]r_valB_o
+    );
+
+15. 流水线控制逻辑模块：controller.v
+
+功能：控制流水线运作，插入气泡或暂停流水线；
+
+接口设计：
+
+    module controller(
+        input wire [`ICODE_BUS] D_icode_i,
+        input wire [`REG_ADDR_BUS] D_rA_i,
+        input wire [`REG_ADDR_BUS] D_rB_i,
+        input wire [`ICODE_BUS] E_icode_i,
+        input wire [`REG_ADDR_BUS] E_dstM_i,
+        input wire e_Cnd_i,
+        input wire [`ICODE_BUS] M_icode_i,
+        input wire [`STAT_BUS] m_stat_i,
+        input wire [`STAT_BUS] W_stat_i,
+
+        output reg F_stall_o,
+        output reg D_bubble_o,
+        output reg D_stall_o,
+        output reg E_bubble_o,
+        output reg set_cc_o,
+        output reg M_bubble_o,
+        output reg W_stall_o
+    );
+
+__外围模块__
+
+1. 指令内存模块：i_mem.v
+
+功能：存储程序指令；
+
+接口设计：
+
+    module i_mem(
+        input wire [`ADDR_BUS] addr,
+        output reg [`INST_BUS] inst,
+        output reg error
+    );
+
+2. 数据内存模块：d_mem.v
+
+功能：存储程序数据；
+
+端口设计：
+
+    module d_mem(
+        input wire clk,
+        input wire rst,
+        input wire write,
+        input wire [`ADDR_BUS] addr,
+        input wire [`DATA_BUS] data_i,
+
+        output reg [`DATA_BUS] data_o,
+        output reg error
+    );
